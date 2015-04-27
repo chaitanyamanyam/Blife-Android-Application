@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Search Blood Donors"
+        android:text="SEARCH BLOOD DONORS"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center_horizontal"
         android:background="#34495e"

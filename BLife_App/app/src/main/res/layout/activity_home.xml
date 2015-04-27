@@ -12,9 +12,10 @@
         android:layout_alignParentTop="true"
         android:id="@+id/expandableListView2"
         android:groupIndicator = "@drawable/explist_indicator"
-        android:listSelector="@drawable/list_group_highlighter"
         android:choiceMode="singleChoice"
         android:layout_alignParentBottom="true"
         android:smoothScrollbar="true" />
+
+
 
 </RelativeLayout>

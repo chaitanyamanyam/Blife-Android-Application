@@ -90,6 +90,13 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(back_Intent);
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long

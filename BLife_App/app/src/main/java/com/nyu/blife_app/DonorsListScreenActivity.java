@@ -1,6 +1,5 @@
 package com.nyu.blife_app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -35,7 +34,7 @@ public class DonorsListScreenActivity extends ActionBarActivity {
         LinearLayoutManager dListlayoutManager = new LinearLayoutManager(getApplication());
         donorsListView.setLayoutManager(dListlayoutManager);
 
-        // Add donors dynamically
+        // Add donors dynamically with database
         FetchDonorListData itemsData[] = { new FetchDonorListData("Phone",R.mipmap.phone),
                 new FetchDonorListData("Phone",R.mipmap.phone1),
                 new FetchDonorListData("Phone",R.mipmap.plus),

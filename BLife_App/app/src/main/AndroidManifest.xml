@@ -1,22 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.nyu.blife_app">
+    package="com.nyu.blife_app" >
 
     <uses-sdk
         android:maxSdkVersion="22"
         android:minSdkVersion="15"
         android:targetSdkVersion="21" />
 
+    <!--Permissions for setting up Parse's "Push notifications"-->
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!--
+      IMPORTANT: Change "com.parse.starter.permission.C2D_MESSAGE" in the lines below
+      to match your app's package name + ".permission.C2D_MESSAGE".
+    -->
+    <permission android:protectionLevel="signature"
+        android:name="com.nyu.blife_app.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.nyu.blife_app.permission.C2D_MESSAGE" />
+
+
+
     <uses-permission android:name="android.permission.CALL_DIAL" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+
     <uses-permission
         android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
     <uses-permission
@@ -26,110 +43,171 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+    <action android:name="android.location.PROVIDERS_CHANGED" />
+    <receiver android:name=".GpsLocationReceiver">
+        <intent-filter>
+            <action android:name="android.location.PROVIDERS_CHANGED" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </receiver>
+
+
 
     <application
+        android:name="com.nyu.blife_app.Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        tools:replace="android:icon,android:theme">
+        tools:replace="android:icon,android:theme" >
         <activity
+
             android:name=".WelcomeActivity"
-            android:label="@string/app_name" >
+            android:icon="@drawable/logo" >
+
 
         </activity>
         <activity
             android:name=".SearchDonorsActivity"
-            android:label="" >
-
-
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".DonorsListScreenActivity"
-            android:label="" >
-
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".SendBloodRequestActivity"
-            android:label="" >
+            android:icon="@drawable/logo" >
+
+
         </activity>
         <activity
             android:name=".ViewBloodRequestActivity"
-            android:label="" >
-
-
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".BloodRequiredActivity"
-            android:label="" >
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".ManageRequestsScreen"
-            android:label="" >
+            android:icon="@drawable/logo" >
+
+
         </activity>
         <activity
             android:name=".SearchHospitalsScreen"
-            android:label="" >
+
+            android:icon="@drawable/logo" >
+
+        </activity>
+        <activity
+            android:name=".SearchBloodBankActivity"
+            android:icon="@drawable/logo" >
+
+
+        </activity>
+        <activity
+            android:name=".HelplineNumbersScreen"
+            android:icon="@drawable/logo">
+        </activity>
+        <activity
+            android:name=".FAQsScreen"
+
+            android:icon="@drawable/logo">
+
+        </activity>
+        <activity
+            android:name=".RegistrationActivity"
+            android:icon="@drawable/logo">
+
+        </activity>
+        <activity
+            android:name=".DonorRegistrationActivity"
+            android:icon="@drawable/logo" >
+
+        </activity>
+        <activity
+            android:name=".RegistrationAuthenticationActivity"
+            android:icon="@drawable/logo" >
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:icon="@drawable/logo"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
+        </activity>
+        <activity
+            android:name=".HomeActivity"
+
+            android:icon="@drawable/logo" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
         <activity
-            android:name=".SearchBloodBankActivity"
-            android:label="" >
-        </activity>
-        <activity
-            android:name=".HelplineNumbersScreen"
-            android:label="" >
-
-        </activity>
-        <activity
-            android:name=".FAQsScreen"
-            android:label="@string/app_name" >
-
-        </activity>
-        <activity
-            android:name=".RegistrationActivity"
-
-            android:label="@string/title_activity_registration">
-        </activity>
-
-        <activity
-            android:name=".DonorRegistrationActivity"
-            android:label="@string/app_name" >
-
-
-        </activity>
-        <activity
-            android:name=".RegistrationAuthenticationActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home" >
-
-
-        </activity>
-        <activity
             android:name=".SettingsActivity"
-            android:label="Settings" >
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".HealthTipsActivity"
-            android:label="@string/title_activity_health_tips" >
+            android:icon="@drawable/logo" >
         </activity>
         <activity
             android:name=".AboutBLifeActivity"
-            android:label="@string/title_activity_about_blife" >
+            android:icon="@drawable/logo" >
         </activity>
+        <activity
+
+            android:name=".SelectedHospitalDetails"
+
+            android:icon="@drawable/logo" >
+
+        </activity>
+
+        <activity android:name=".RequestVerificationActivity"
+            android:label="@string/title_activity_request_verification"
+            android:parentActivityName=".ManageRequestsScreen">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.nyu.blife_app.ManageRequestsScreen"/>
+        </activity>
+
+
+        <!--code for setting up Parse's "Push notifications"-->
+
+        <service android:name="com.parse.PushService" />
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.ParsePushBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <!--
+                  IMPORTANT: Change "com.parse.starter" to match your app's package name.
+                -->
+                <category android:name="com.nyu.blife_app" />
+            </intent-filter>
+        </receiver>
+
+        <!-- replace @drawable/push_icon with your push icon identifier -->
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/logo"/>
+
     </application>
 
 </manifest>

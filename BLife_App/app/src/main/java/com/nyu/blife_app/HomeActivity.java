@@ -1,14 +1,27 @@
 package com.nyu.blife_app;
 
 import android.content.Intent;
+
+import android.net.ConnectivityManager;
+
+import android.graphics.Point;
+import android.os.Build;
+
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ExpandableListView;
 
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -26,6 +39,10 @@ public class HomeActivity extends ActionBarActivity {
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    List<Integer> listDataHeaderImages;
+    GPStracker home_gpstracker;
+    //HashMap<Integer, List<Integer>> listDataChildImages;
+
 
 
     @Override
@@ -34,17 +51,50 @@ public class HomeActivity extends ActionBarActivity {
         setContentView(R.layout.activity_home);
         expListView=(ExpandableListView) findViewById(R.id.expandableListView2);
         prepareListData();
-        listAdapter=new ExpandableListAdapter(this,listDataHeader,listDataChild);
+        listAdapter=new ExpandableListAdapter(this,listDataHeader,listDataChild, listDataHeaderImages);
         expListView.setAdapter(listAdapter);
+        home_gpstracker=new GPStracker(HomeActivity.this);
+
+        //code to resize the Expandable ListView as per the device screen size when list view has been completely populated with child views
+        //Code Reference - http://stackoverflow.com/questions/1016896/get-screen-dimensions-in-pixels
+       /* WindowManager w = this.getWindowManager();
+        Display d = w.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        d.getMetrics(metrics);
+
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+
+        // includes window decorations (status bar/menu bar)
+        if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17)
+            try {
+                widthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(d);
+                heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
+            } catch (Exception ignored) {
+            }
+        // includes window decorations (status bar/menu bar)
+        if (Build.VERSION.SDK_INT >= 17)
+            try {
+                Point realSize = new Point();
+                Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
+                widthPixels = realSize.x;
+                heightPixels = realSize.y;
+            } catch (Exception ignored) {
+            }*/
 
 
-        // Listview Group click listener
+       // expListView.setLayoutParams(new RelativeLayout.LayoutParams(500, 300));
+
+
+        // ListView Group click listener
 
         expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View view, int groupPosition, long id) {
                 int index = parent.getFlatListPosition(ExpandableListView
                         .getPackedPositionForGroup(groupPosition));
+
+               //highlight the selected list group using selector from list_group_highlighter.xml
                 parent.setItemChecked(index, true);
 
                 if(listDataHeader.get(groupPosition).equals("SEARCH DONORS")){
@@ -92,11 +142,15 @@ public class HomeActivity extends ActionBarActivity {
             }
         });
 
-        // Listview Child click listener
+        // ListView Child click listener
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
 
+                int index = parent.getFlatListPosition(ExpandableListView
+                        .getPackedPositionForChild(groupPosition, childPosition));
+                //highlight the selected list child using selector from list_item_highlighter.xml
+                parent.setItemChecked(index, true);
 
                 if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEND BLOOD REQUEST")){
                     Toast.makeText(
@@ -146,8 +200,17 @@ public class HomeActivity extends ActionBarActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition), Toast.LENGTH_SHORT)
                             .show();
-                    Intent searchHospitalIntent = new Intent(getApplicationContext(), SearchHospitalsScreen.class);
-                    startActivity(searchHospitalIntent);
+                    if(isInternetOn()) {
+                           if(check_gps()) {
+                               Intent searchHospitalIntent = new Intent(getApplicationContext(),
+                                       SearchHospitalsScreen.class);
+                               startActivity(searchHospitalIntent);
+
+                           }
+
+
+
+                    }
                 }
 
                 if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEARCH BLOOD BANKS")){
@@ -159,15 +222,19 @@ public class HomeActivity extends ActionBarActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition), Toast.LENGTH_SHORT)
                             .show();
-                    Intent searchBanksIntent = new Intent(getApplicationContext(), SearchBloodBankActivity.class);
-                    startActivity(searchBanksIntent);
+                    if(isInternetOn()) {
+                        if(check_gps()) {
+                            Intent searchBanksIntent = new Intent(getApplicationContext(), SearchBloodBankActivity.class);
+                            startActivity(searchBanksIntent);
+                        }
+                    }
                 }
 
                 return false;
             }
         });
 
-        // Listview Group expanded listener
+        // ListView Group expanded listener
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
@@ -272,13 +339,35 @@ public class HomeActivity extends ActionBarActivity {
             }
         });*/
 
-
-
-
-
     }
 
 
+    public final boolean isInternetOn() {
+
+        // get Connectivity Manager object to check connection
+        ConnectivityManager connec =
+                (ConnectivityManager)getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+
+        // Check for network connections
+        if ( connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTED ||
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED ) {
+
+            // if connected with internet
+
+            Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
+            return true;
+
+        } else if (
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.DISCONNECTED ||
+                        connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.DISCONNECTED  ) {
+
+            Toast.makeText(this, " Not Connected ", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -311,12 +400,57 @@ public class HomeActivity extends ActionBarActivity {
         }
         return true;
     }
+    private boolean check_gps(){
+           boolean k=true;
+
+            if (home_gpstracker.canGetLocation()) {
+                k= true;
+            }
+            else{
+                // can't get location
+                // GPS or Network is not enabled
+                // Ask user to enable GPS/network in settings
+                home_gpstracker.showSettingsAlert();
+                k=false;
+
+
+
+            }
+
+            return k;
+
+//                finish();
+
+
+
+    }
+
+//    protected void onPause(){
+//        super.onPause();
+//        HomeActivity.this.finish();
+//    }
+//    @Override
+//    protected void onResume() {
+//
+//        super.onResume();
+//       HomeActivity.this.recreate();
+//    }
+@Override
+public void onRestart() {
+    super.onRestart();
+    //When BACK BUTTON is pressed, the activity on the stack is restarted
+    //Do what you want on the refresh procedure here
+    Log.v("Full","Restart");
+    HomeActivity.this.recreate();
+}
+    //prepare data for lists of group and child titles as well as lists of group and child images
     private void prepareListData(){
 
+        //for titles
         listDataHeader=new ArrayList<String>();
         listDataChild=new HashMap<String,List<String>>();
         listDataHeader.add("SEARCH DONORS");
-        List<String> home_list =new ArrayList<String>();
+        List<String> home_list = new ArrayList<String>();
 
 
         listDataHeader.add("BLOOD REQUEST");
@@ -342,6 +476,22 @@ public class HomeActivity extends ActionBarActivity {
         listDataHeader.add("ABOUT B-LIFE");
         List<String> home_list6 =new ArrayList<String>();
 
+
+        //for images
+        listDataHeaderImages = new ArrayList<Integer>();
+        //listDataChildImages = new HashMap<Integer,List<Integer>>();
+
+        listDataHeaderImages.add(R.drawable.globe);
+        //List<String> home_list = new ArrayList<String>();
+
+
+        listDataHeaderImages.add(R.drawable.users);
+
+        listDataHeaderImages.add(R.drawable.plus);
+        listDataHeaderImages.add(R.drawable.phone1);
+        listDataHeaderImages.add(R.drawable.tips);
+        listDataHeaderImages.add(R.drawable.faq);
+        listDataHeaderImages.add(R.drawable.rightgray);
 
 
 

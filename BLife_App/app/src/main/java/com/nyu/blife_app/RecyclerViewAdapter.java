@@ -77,7 +77,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                 sDialog.cancel();
                             }
                         })
-                        .show();
+                            .show();
             }
         });
 

@@ -1,9 +1,11 @@
 package com.nyu.blife_app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ public class RegistrationActivity extends ActionBarActivity {
     String phoneno,city_selected;
     Button registerbtn;
     EditText phone_number;
+    Context registration=this;
     public final static String EXTRA_MESSAGE = "com.mycompany.Blife.MESSAGE";
 
 
@@ -80,8 +83,15 @@ public class RegistrationActivity extends ActionBarActivity {
                         } else {
                             //SMS code
                             if (!get_city.equals("CITY")) {
-                                sendSMSMessage(conc_string);
+                                if(isMobileAvailable(registration)) {
+                                    sendSMSMessage(conc_string);
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(),"No GSM Connectivity"
+                                            ,Toast.LENGTH_SHORT).show();
+                                }
                             } else {
+
                                 Toast.makeText(getApplicationContext(), "Enter valid City.", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -269,5 +279,10 @@ public class RegistrationActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static Boolean isMobileAvailable(Context appcontext) {
+        TelephonyManager tel = (TelephonyManager) appcontext.getSystemService(Context.TELEPHONY_SERVICE);
+        return ((tel.getNetworkOperator() != null && tel.getNetworkOperator().equals("")) ? false : true);
     }
 }

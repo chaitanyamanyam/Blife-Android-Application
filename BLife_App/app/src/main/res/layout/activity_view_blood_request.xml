@@ -16,8 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/title_activity_donor_registration"
-        android:id="@+id/txtDonorRegistration"
+        android:text="VIEW BLOOD REQUESTS"
+        android:id="@+id/txtViewBR"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:background="#34495e"
@@ -28,10 +28,5 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerDonorsList"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 </RelativeLayout>
 </ScrollView>

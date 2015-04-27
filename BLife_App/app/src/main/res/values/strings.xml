@@ -24,6 +24,7 @@
     <string name="register_donor_checkbox">REGISTER AS A DONOR?</string>
     <string name="register_Button">REGISTER</string>
     <string name="push_text">Turn on or off to receive push notifications</string>
+
     <!-- Strings defined for Donor Registration Screen -->
     <string name="title_activity_donor_registration">DONOR REGISTRATION</string>
     <string name="register_donor_DOB">DATE OF BIRTH</string>
@@ -37,6 +38,12 @@
     <string name="register_donor_pregnant">ARE YOU PREGNANT?</string>
     <string name="profile">EDIT PROFILE</string>
 
+    <!-- Strings defined for Home Screen -->
+    <string name="title_activity_home">B-LIFE</string>
+    <string name="list_group_title">Group Title</string>
+    <string name="list_group_image">Group Image</string>
+
+
     <string name="title_activity_search_donors">SearchDonorsActivity</string>
     <string name="title_activity_donors_list">DonorsListActivity</string>
     <string name="title_activity_send_blood_request">SendBloodRequestActivity</string>
@@ -45,9 +52,9 @@
 
 
 
-    <string name="title_activity_registration_authentication">Registration Authentication</string>
+    <string name="title_activity_registration_authentication">REGISTRATION AUTHENTICATION</string>
     <string name="title_activity_login">ENTER LOGIN DETAILS</string>
-    <string name="title_activity_home">B-LIFE</string>
+
     <string name="title_activity_donors_list_screen">DonorsListScreenActivity</string>
     <string name="title_activity_manage_requests_screen">ManageRequestsScreen</string>
     <string name="title_activity_search_hospitals_screen">SearchHospitalsScreen</string>
@@ -85,6 +92,10 @@
     <string name="consumer_secret">9dw5LpBjtlhB-cMXHA2uYsWkgTI</string>
     <string name="token">VKDcN9l-VQrleLLOD5duvrMD7CTfbtAY</string>
     <string name="token_secret">R3nsLGb8L5DOpTB3b9tEELxQ90k</string>
+
+    <string name="title_activity_selected_hospital_details">SelectedHospitalDetails</string>
+
+    <string name="title_activity_request_verification">RequestVerificationActivity</string>
 
 
 

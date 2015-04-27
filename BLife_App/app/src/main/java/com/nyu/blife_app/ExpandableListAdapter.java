@@ -1,17 +1,17 @@
 package com.nyu.blife_app;
 
 
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 
@@ -21,18 +21,30 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
 
+    // group images
+    private List<Integer> _listDataHeaderImages;
+
+    // child image data in format of group images, child images
+    //private HashMap<Integer, List<Integer>> _listDataChildImages;
+
+
+
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+                                 HashMap<String, List<String>> listChildData,
+                                 List<Integer> listGroupImages) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
-
+        this._listDataHeaderImages = listGroupImages;
+        //this._listDataChildImages = listChildImages;
 }
+
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return this._listDataChild.get(this._listDataHeader.get(groupPosition))
                 .get(childPosition);
     }
+
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
@@ -105,7 +117,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public int getGroupCount() {
+        public int getGroupCount() {
         return this._listDataHeader.size();
     }
 
@@ -128,6 +140,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.lblListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
+
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.groupImageView);
+        int imageId = this._listDataHeaderImages.get(groupPosition);
+        imageView.setImageResource(imageId);
 
 
        /* //set background color for "BLOOD REQUEST" & "SEARCH DONATION CAMPS" list group items, which are not buttons

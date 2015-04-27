@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -39,6 +39,8 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
     RadioButton radiobtnGender, radiobtnDisease, radiobtnPregnant;
     Button registerbtnDonor;
     String weight,bloodgroup_selected;
+    String conc_radio;
+    Context donorregistration=this;
     public final static String EXTRA_MESSAGE = "com.mycompany.Blife.MESSAGE";
 
 
@@ -76,18 +78,33 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
                 final String get_BloodGroup = spinnerselectBloodGroup.getSelectedItem().toString();
 
 
-                int id_gender = addListenerRadioGroupGender();
-                int id_disease = addListenerRadioGroupDisease();
-                int id_pregnant = addListenerRadioGroupPregnant();
+
+                String id_gender = addListenerRadioGroupGender();
+                String id_disease = addListenerRadioGroupDisease();
+                String id_pregnant = addListenerRadioGroupPregnant();
+                    conc_radio = get_date +","+get_BloodGroup + ","+id_gender + ","+get_weight+","+ id_disease+","+id_pregnant;
+                    Log.d("hello", conc_radio);
+
+              
+
 
                 validateWeight(get_weight);
                 validateBloodGroup(get_BloodGroup);
 
                 if(!get_weight.isEmpty() && !get_BloodGroup.isEmpty())
                 {
-                    if((id_gender > 0) && (id_disease > 0) && (id_pregnant > 0))
+                    if((!id_gender.equals("")) && (!id_disease.equals("")) && (!id_pregnant.equals("")))
                     {
-                        sendSMSMessage(get_phoneno,get_reg_details);
+                        if(isMobileAvailable(donorregistration)) {
+
+
+                            sendSMSMessage(get_phoneno, get_reg_details, conc_radio);
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"No GSM Connectivity"
+                                    ,Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 }
@@ -143,52 +160,60 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
         });
     }
 
-    private int addListenerRadioGroupPregnant() {
+    private String addListenerRadioGroupPregnant() {
         int id_selected = radiogrpPregnant.getCheckedRadioButtonId();
         radiobtnPregnant = (RadioButton) findViewById(id_selected);
+        String pregnancy = "";
         if(id_selected <= 0)
         {
             txtviewpregnant.setError("Select option..");
-            return id_selected;
+            return pregnancy;
 
         }
         else
         {
+            pregnancy = radiobtnPregnant.getText().toString();
             txtviewpregnant.setError(null);
-            return id_selected;
+            return pregnancy;
         }
     }
-    private int addListenerRadioGroupDisease() {
+    private String addListenerRadioGroupDisease() {
         int id_selected = radiogrpDisease.getCheckedRadioButtonId();
+        String infect_disease="";
         radiobtnDisease = (RadioButton) findViewById(id_selected);
         if(id_selected <= 0)
         {
             txtviewdisease.setError("Select option..");
-            return id_selected;
+            return infect_disease;
         }
         else
         {
+            infect_disease = radiobtnDisease.getText().toString();
             txtviewdisease.setError(null);
-            return id_selected;
+            return infect_disease;
         }
     }
-    private int addListenerRadioGroupGender() {
+    private String addListenerRadioGroupGender() {
         int id_selected = radiogrpGender.getCheckedRadioButtonId();
         radiobtnGender = (RadioButton) findViewById(id_selected);
+        String genderName="";
         if(id_selected <= 0)
         {
             txtviewgender.setError("Select Gender..");
-            return id_selected;
+            return genderName;
         }
         else
         {
+
+            genderName = radiobtnGender.getText().toString();
+            Log.d("hello", genderName);
             txtviewgender.setError(null);
-            return id_selected;
+            return genderName;
         }
 
      }
 
-    protected void sendSMSMessage(String phone,String send_details)
+    protected void sendSMSMessage(String phone,String send_details, String send_radio_values)
     {
         Log.i("Send SMS", "");
         String phoneNo = phone;
@@ -203,6 +228,7 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             intent1.putExtra("Donor_Code", my_name);
             intent1.putExtra("Donor_User",send_details);
             intent1.putExtra("Type",type_user);
+            intent1.putExtra("donor_details", send_radio_values);
 
             startActivity(intent1);
         } catch (Exception e) {
@@ -312,5 +338,10 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static Boolean isMobileAvailable(Context appcontext) {
+        TelephonyManager tel = (TelephonyManager) appcontext.getSystemService(Context.TELEPHONY_SERVICE);
+        return ((tel.getNetworkOperator() != null && tel.getNetworkOperator().equals("")) ? false : true);
     }
 }

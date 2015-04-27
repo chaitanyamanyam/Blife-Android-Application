@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/title_activity_registration_authentication"
-        android:id="@+id/txtRegistrationAuth"
+        android:text="BLOOD REQUEST AUTHENTICATION"
+        android:id="@+id/txtBRAuth"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:background="#34495e"
@@ -27,12 +27,13 @@
         android:text="Enter Verification Code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv1"
+        android:id="@+id/tv1code"
         android:padding="16dp"
         android:textColor="#000000"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_above="@+id/auth_editText"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/verify_editText"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:textColorHint="#34495e"
@@ -43,7 +44,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/auth_editText"
+        android:id="@+id/verify_editText"
         android:hint="Enter Code"
         android:padding="16dp"
         android:gravity="center_horizontal"
@@ -54,8 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="59dp"
-        android:layout_below="@+id/auth_editText"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/verify_editText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
@@ -63,16 +64,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Confirm"
-            android:id="@+id/auth_button"
+            android:text="CONFIRM"
+            android:id="@+id/verify_button"
             android:textColor="#ffffffff"
             style="@style/ButtonText"
             android:background="@drawable/button_style"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
             android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/auth_editText"
-            android:layout_centerHorizontal="true" />
+             />
+
     </LinearLayout>
 
 </RelativeLayout>

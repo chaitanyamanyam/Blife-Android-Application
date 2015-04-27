@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +17,12 @@ import android.widget.Button;
 
 import com.nyu.blife_app.models.User;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
-
+import com.parse.SaveCallback;
 
 
 public class WelcomeActivity extends Activity {
@@ -33,8 +37,23 @@ public class WelcomeActivity extends Activity {
 
         check_network_status();
         /** enabling the database */
-        Parse.enableLocalDatastore(this);
+        //Parse.enableLocalDatastore(this);
+        //Parse.initialize(getApplicationContext());
         Parse.initialize(this, "6qUFzAHfl9bXRzzDlBegiXZx0Tw5dc29m3jXmnHt", "TS6OswWh6HwKQm2uCJxqfprlyrP2mfpkmwkx3Vg9");
+
+        //code for setting up Parse's "Push notifications"
+        //ParseInstallation.getCurrentInstallation().saveInBackground();
+
+       /* ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });*/
 
         /*calling the User class from models */
         ParseObject.registerSubclass(User.class);
@@ -72,6 +91,11 @@ public class WelcomeActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     public static boolean isNetworkStatusAvialable(Context context) {
