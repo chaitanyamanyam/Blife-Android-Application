@@ -57,7 +57,12 @@ public class SearchBloodBankActivity extends ActionBarActivity {
                     return data_location;
                 }
 
+                public String getnumber(){
+                    return url;
+                }
+
             }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,9 +143,27 @@ public class SearchBloodBankActivity extends ActionBarActivity {
                                     String uri = String.format(Locale.ENGLISH,
                                             "http://maps.google.com/maps?daddr=%f,%f",
                                             Float.valueOf(float1), Float.valueOf(float2));
-                                    Intent intent66 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                    intent66.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                                    startActivity(intent66);
+                                    String add="";
+                                    try {
+                                        JSONObject for_address=new JSONObject(biz.getLocation());
+                                        add =for_address.getString("display_address");
+                                        add=add.replaceAll("[\\[\\]\"]","");
+
+                                        Log.v("Getting address555",add);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+//                                    Intent intent66 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                                    intent66.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+//                                    startActivity(intent66);
+
+                                    Intent it_blood=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
+                                    it_blood.putExtra("lat", float1);
+                                    it_blood.putExtra("long", float2);
+                                    it_blood.putExtra("num", biz.getnumber());
+                                    it_blood.putExtra("address", add);
+                                    it_blood.putExtra("name", biz.toString());
+                                    startActivity(it_blood);
 
                                 }
                             });
@@ -168,7 +191,7 @@ public class SearchBloodBankActivity extends ActionBarActivity {
 
                     JSONObject hospital_returned = blood_bank_json.getJSONObject(i);
                     BloodBankNames.add(new Bloodbank(hospital_returned.optString("name"),
-                            hospital_returned.optString("mobile_url"), hospital_returned.optString("location")));
+                            hospital_returned.optString("phone"), hospital_returned.optString("location")));
                     Log.v("Inside Json232",hospital_returned.optString("location"));
 
 
@@ -180,6 +203,13 @@ public class SearchBloodBankActivity extends ActionBarActivity {
             }
 
 
+
+    @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(SearchBloodBankActivity.this, HomeActivity.class);
+        startActivity(back_Intent);
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

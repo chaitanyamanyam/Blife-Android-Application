@@ -96,6 +96,10 @@
     <string name="title_activity_selected_hospital_details">SelectedHospitalDetails</string>
 
     <string name="title_activity_request_verification">RequestVerificationActivity</string>
+    <string name="title_activity_search_result_vbractvity">SearchResultVBRActvity</string>
+    <string name="title_activity_single_item_view">SingleItemView</string>
+    <string name="title_activity_searchhotels">Searchhotels</string>
+    <string name="title_activity_search_hotels">SearchHotels</string>
 
 
 

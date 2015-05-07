@@ -88,12 +88,12 @@ private void signup(String input_details, String input_donor, String input_type)
     final String get_city = parse_details[6];
             String member_type = input_type;
     String[] input_donor_values = input_donor.split(",");
-    final String get_dob = input_donor_values[0]+input_donor_values[1];
-    final String get_blood_group = input_donor_values[2];
-    final String get_gender = input_donor_values[3];
-    final String get_weight = input_donor_values[4];
-    final String get_disease_value = input_donor_values[5];
-    final String get_pregnancy = input_donor_values[6];
+    final String get_dob = input_donor_values[0];
+    final String get_blood_group = input_donor_values[1];
+    final String get_gender = input_donor_values[2];
+    final String get_weight = input_donor_values[3];
+    final String get_disease_value = input_donor_values[4];
+    final String get_pregnancy = input_donor_values[5];
    // Toast.makeText(getApplicationContext(), get_city+get_firstname+get_lastname,Toast.LENGTH_LONG).show();
 
 
@@ -207,6 +207,9 @@ private void signup(String input_details, String input_donor, String input_type)
             }
         });
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

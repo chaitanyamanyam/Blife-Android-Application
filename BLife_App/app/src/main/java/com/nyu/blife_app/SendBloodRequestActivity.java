@@ -5,11 +5,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -22,8 +20,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nyu.blife_app.models.BloodRequest;
+import com.nyu.blife_app.models.User;
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -36,13 +41,16 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
     TextView tvRequireddate;
     Button donorRequestbtn;
     private String donorcity_selected,phoneno,bloodgroup_selected;
+    private Date storeDate;
     Context sendbloodrequest=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_blood_request);
-
+        Parse.initialize(this, "6qUFzAHfl9bXRzzDlBegiXZx0Tw5dc29m3jXmnHt", "TS6OswWh6HwKQm2uCJxqfprlyrP2mfpkmwkx3Vg9");
+        ParseObject.registerSubclass(User.class);
+        ParseObject.registerSubclass(BloodRequest.class);
         donorCity = (Spinner) findViewById(R.id.spinnerCityBR);
         donorCity.setFocusable(true);
         donorCity.setFocusableInTouchMode(true);
@@ -63,7 +71,7 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 final String get_message = etMessage.getText().toString();
                 final String get_donorcity = donorCity.getSelectedItem().toString();
                 final String get_donorBloodGroup = donorBloodGroup.getSelectedItem().toString();
-                final String get_date = tvRequireddate.getText().toString();
+                //final String get_date = tvRequireddate.getText()
 
                 final boolean name_bool = validateName(get_name);
                 final boolean hospital_bool = validateHospital(get_hospital);
@@ -73,7 +81,7 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
 
 
                 final String user_details = get_name + "," + get_hospital + "," + get_donorcity + "," +
-                            get_donorBloodGroup + "," + get_message + "," + get_date + "," + get_phone;
+                            get_donorBloodGroup + "," + get_message + "," + get_phone;
 
 
 
@@ -89,7 +97,7 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                         if(isMobileAvailable(sendbloodrequest)) {
 
 
-                            verifySMSMessage(user_details);
+                            verifySMSMessage(user_details, storeDate );
                         }
                         else{
                             Log.v("Send Blood Request ","No GSM Connectivity");
@@ -240,8 +248,10 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
         }
         else {
             DateFormat dateFormat = DateFormat.getDateInstance();
+            //Calendar day = dateFormat.getCalendar();
             tvRequireddate.setText(dateFormat.format(cal.getTime()));
             tvRequireddate.setError(null);
+            storeDate = cal.getTime();
         }
     }
 
@@ -253,7 +263,7 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
         return randomPIN;
     }
 
-    protected void verifySMSMessage(String send_user)
+    protected void verifySMSMessage(String send_user, Date stDate)
     {
         Log.i("Send SMS", "");
         String phoneNo = etDonorphone.getText().toString();
@@ -267,6 +277,7 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
             verify_intent.putExtra("Request_Code", my_name);
             verify_intent.putExtra("Request_User",send_user);
             verify_intent.putExtra("Type",type_user);
+            verify_intent.putExtra("beforeDate", stDate.getTime());
             startActivity(verify_intent);
             finish();
         } catch (Exception e) {

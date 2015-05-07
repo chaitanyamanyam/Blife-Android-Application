@@ -18,8 +18,8 @@ public class BloodRequest extends ParseObject {
 
     /**getter methods */
 
-    public String getReceiverName(){
-        return getString("receiverName");
+    public String getrequestorName(){
+        return getString("requestorName");
     }
 
     public String getBloodGroup(){
@@ -42,8 +42,8 @@ public class BloodRequest extends ParseObject {
         return getDate("requiredBefore");
     }
 
-    public int getCellNumber(){
-        return getInt("cellNumber");
+    public String getCellNumber(){
+        return getString("cellNumber");
     }
 
     public String getRequestStatus(){
@@ -56,8 +56,8 @@ public class BloodRequest extends ParseObject {
     }
 
     /**setter methods */
-    public void setReceiverName (String receiverName){
-        put("receiverName", receiverName);
+    public void setrequestorName (String requestorName){
+        put("requestorName", requestorName);
     }
 
     public void setBloodGroup(String bloodGroup){
@@ -80,7 +80,7 @@ public class BloodRequest extends ParseObject {
         put("requiredBefore", requiredBefore);
     }
 
-    public void setCellNumber(int cellNumber){
+    public void setCellNumber(String cellNumber){
         put("cellNumber", cellNumber);
     }
 

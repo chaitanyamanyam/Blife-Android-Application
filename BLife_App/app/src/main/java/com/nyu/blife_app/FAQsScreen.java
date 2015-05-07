@@ -1,5 +1,6 @@
 package com.nyu.blife_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -36,6 +37,13 @@ public class FAQsScreen extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_faqs_screen, menu);
         return true;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        finish();
     }
 
     private void prepareListData(){

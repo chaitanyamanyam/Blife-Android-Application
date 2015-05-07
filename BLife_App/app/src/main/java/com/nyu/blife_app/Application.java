@@ -28,6 +28,8 @@ public class Application extends android.app.Application {
         // Initialize the Parse SDK.
         Parse.initialize(this, "6qUFzAHfl9bXRzzDlBegiXZx0Tw5dc29m3jXmnHt", "TS6OswWh6HwKQm2uCJxqfprlyrP2mfpkmwkx3Vg9");
 
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
         // Specify an Activity to handle all pushes by default.
         //PushService.setDefaultPushCallback(this, MainActivity.class);
 

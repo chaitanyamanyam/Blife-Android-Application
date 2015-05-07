@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class SearchHospitalsScreen extends Activity {
+public class SearchHospitalsScreen extends ActionBarActivity {
     private TextView mSearchResultsText;
     private ListView shs_lv;
     private LocationManager locationManager;
@@ -61,13 +61,20 @@ public class SearchHospitalsScreen extends Activity {
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
+
             return name;
         }
 
 
-        public String getLocation() {
+        public String getLocation()
+        {
+
             return data_location;
+        }
+        public String getnumber(){
+            return url;
         }
 
     }
@@ -149,13 +156,31 @@ public class SearchHospitalsScreen extends Activity {
                                 float2 = m.group(2);
                                 Log.v("Code", float1 + " " + float2);
                             }
+                            String add="";
+                            try {
+                                JSONObject for_address=new JSONObject(biz.getLocation());
+                                 add =for_address.getString("display_address");
+                                add=add.replaceAll("[\\[\\]\"]","");
+
+                                Log.v("Getting address555",add);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             String uri = String.format(Locale.ENGLISH,
                                     "http://maps.google.com/maps?daddr=%f,%f",
                                     Float.valueOf(float1), Float.valueOf(float2));
-                            Intent intent44 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            intent44.setClassName("com.google.android.apps.maps",
-                                    "com.google.android.maps.MapsActivity");
-                            startActivity(intent44);
+//                            Intent intent44 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                            intent44.setClassName("com.google.android.apps.maps",
+//                                    "com.google.android.maps.MapsActivity");
+//                            startActivity(intent44);
+
+                            Intent it=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
+                            it.putExtra("lat",float1);
+                            it.putExtra("long",float2);
+                            it.putExtra("num",biz.getnumber());
+                            it.putExtra("address",add);
+                            it.putExtra("name",biz.toString());
+                            startActivity(it);
                         }
                     });
 
@@ -182,7 +207,7 @@ public class SearchHospitalsScreen extends Activity {
 
             JSONObject hospital_returned = hospitals_json.getJSONObject(i);
             hospitalNames.add(new Business(hospital_returned.optString("name"),
-                    hospital_returned.optString("mobile_url"), hospital_returned.optString("location")));
+                    hospital_returned.optString("phone"), hospital_returned.optString("location")));
             Log.v("Inside Json232", hospital_returned.optString("location"));
 
 
@@ -191,6 +216,14 @@ public class SearchHospitalsScreen extends Activity {
         return hospitalNames;
 
         //return TextUtils.join("\n", hospitalNames);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(SearchHospitalsScreen.this, HomeActivity.class);
+        startActivity(back_Intent);
+        finish();
     }
 
 

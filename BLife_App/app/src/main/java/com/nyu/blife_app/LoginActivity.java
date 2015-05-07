@@ -91,7 +91,7 @@ public class LoginActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        Intent back_Intent = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent back_Intent = new Intent(LoginActivity.this, WelcomeActivity.class);
         startActivity(back_Intent);
         finish();
     }

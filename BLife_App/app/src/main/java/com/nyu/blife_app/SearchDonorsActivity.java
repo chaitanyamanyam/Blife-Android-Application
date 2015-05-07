@@ -1,17 +1,16 @@
 package com.nyu.blife_app;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 
@@ -61,7 +60,8 @@ public class SearchDonorsActivity extends ActionBarActivity{
             public void onClick(View v) {
 
                 final String get_zip = zipCode.getText().toString();
-
+                final String select_blood = spinnerBloodGroup.getSelectedItem().toString();
+                final String select_city = spinnerCity.getSelectedItem().toString();
                 if(!get_zip.equals(""))
                 {
                     if(Bgroup_bool && City_bool) {
@@ -69,6 +69,9 @@ public class SearchDonorsActivity extends ActionBarActivity{
                         Toast.makeText(getBaseContext(), "City - " + cityvalidate_input, Toast.LENGTH_SHORT).show();
                         Toast.makeText(getBaseContext(), "Zip - " + get_zip, Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(SearchDonorsActivity.this, DonorsListScreenActivity.class);
+                        i.putExtra("blood", select_blood);
+                        i.putExtra("city", select_city);
+                        i.putExtra("zip", get_zip);
                         startActivity(i);
                         finish();
                     }
@@ -97,6 +100,14 @@ public class SearchDonorsActivity extends ActionBarActivity{
         });
     }
 
+
+
+    @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(SearchDonorsActivity.this, HomeActivity.class);
+        startActivity(back_Intent);
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

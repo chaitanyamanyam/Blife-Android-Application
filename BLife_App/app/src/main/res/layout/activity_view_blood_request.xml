@@ -1,22 +1,14 @@
-<ScrollView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.nyu.blife_app.ViewBloodRequestActivity"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    >
+    android:background="#de99ac">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="VIEW BLOOD REQUESTS"
+        android:text="SEARCH BLOOD REQUESTS"
         android:id="@+id/txtViewBR"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
@@ -28,5 +20,82 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Search Parameters"
+        android:id="@+id/txtViewSearchBR"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/txtViewBR"
+        android:padding="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Filter by"
+        android:id="@+id/filterSearchBR"
+        android:textColor="@android:color/black"
+        android:padding="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/txtViewSearchBR"
+        android:layout_marginLeft="16dp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchBG"
+        android:entries="@array/Blood_Group"
+        android:padding="16dp"
+        android:layout_margin="10dp"
+        android:layout_marginRight="32dp"
+        android:layout_below="@+id/filterSearchBR"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="OR"
+        android:id="@+id/OR"
+        android:textColor="@android:color/black"
+        android:padding="10dp"
+        android:layout_below="@+id/searchBG"
+        android:layout_centerHorizontal="true" />
+
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchCity"
+        android:entries="@array/Cities"
+        android:padding="16dp"
+        android:layout_margin="10dp"
+        android:layout_marginRight="32dp"
+        android:layout_below="@+id/OR"
+       />
+
+
+        <Button
+            android:id="@+id/btnSearchReq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="40dp"
+            android:paddingLeft="40dp"
+            android:text="Search Request"
+            android:gravity="center|center_horizontal"
+            android:layout_marginTop="15dp"
+            android:textColor="#ffffffff"
+            style="@style/ButtonText"
+            android:background="@drawable/button_style"
+            android:layout_below="@+id/searchCity"
+            android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>
-</ScrollView>

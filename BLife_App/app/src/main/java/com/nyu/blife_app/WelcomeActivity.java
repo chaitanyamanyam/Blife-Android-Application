@@ -8,21 +8,16 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.nyu.blife_app.models.BloodRequest;
 import com.nyu.blife_app.models.User;
 import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 
 public class WelcomeActivity extends Activity {
@@ -38,7 +33,7 @@ public class WelcomeActivity extends Activity {
         check_network_status();
         /** enabling the database */
         //Parse.enableLocalDatastore(this);
-        //Parse.initialize(getApplicationContext());
+       // Parse.initialize(getApplicationContext());
         Parse.initialize(this, "6qUFzAHfl9bXRzzDlBegiXZx0Tw5dc29m3jXmnHt", "TS6OswWh6HwKQm2uCJxqfprlyrP2mfpkmwkx3Vg9");
 
         //code for setting up Parse's "Push notifications"
@@ -57,7 +52,7 @@ public class WelcomeActivity extends Activity {
 
         /*calling the User class from models */
         ParseObject.registerSubclass(User.class);
-
+        ParseObject.registerSubclass(BloodRequest.class);
         //code for maintaining the sessions
          if (ParseUser.getCurrentUser() != null){
          startActivity(new Intent(this, HomeActivity.class));

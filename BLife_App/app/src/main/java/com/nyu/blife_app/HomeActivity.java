@@ -1,27 +1,14 @@
 package com.nyu.blife_app;
 
 import android.content.Intent;
-
 import android.net.ConnectivityManager;
-
-import android.graphics.Point;
-import android.os.Build;
-
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ExpandableListView;
-
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -97,7 +84,7 @@ public class HomeActivity extends ActionBarActivity {
                //highlight the selected list group using selector from list_group_highlighter.xml
                 parent.setItemChecked(index, true);
 
-                if(listDataHeader.get(groupPosition).equals("SEARCH DONORS")){
+                if(listDataHeader.get(groupPosition).equals("SEARCH BLOOD DONORS")){
                     Toast.makeText(getApplicationContext(),
                             listDataHeader.get(groupPosition) + " Expanded",
                             Toast.LENGTH_SHORT).show();
@@ -105,7 +92,7 @@ public class HomeActivity extends ActionBarActivity {
                     startActivity(searchDonorIntent);
                 }
 
-                if(listDataHeader.get(groupPosition).equals("HELPLINE")){
+                if(listDataHeader.get(groupPosition).equals("HELPLINE NUMBERS")){
                     Toast.makeText(getApplicationContext(),
                             listDataHeader.get(groupPosition) + " Expanded",
                             Toast.LENGTH_SHORT).show();
@@ -113,7 +100,7 @@ public class HomeActivity extends ActionBarActivity {
                     startActivity(helplineIntent);
                 }
 
-                if(listDataHeader.get(groupPosition).equals("TIPS")){
+                if(listDataHeader.get(groupPosition).equals("TIPS FOR DONORS")){
                     Toast.makeText(getApplicationContext(),
                             listDataHeader.get(groupPosition) + " Expanded",
                             Toast.LENGTH_SHORT).show();
@@ -152,7 +139,7 @@ public class HomeActivity extends ActionBarActivity {
                 //highlight the selected list child using selector from list_item_highlighter.xml
                 parent.setItemChecked(index, true);
 
-                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEND BLOOD REQUEST")){
+                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEND A BLOOD REQUEST")){
                     Toast.makeText(
                             getApplicationContext(),
                             listDataHeader.get(groupPosition)
@@ -165,7 +152,7 @@ public class HomeActivity extends ActionBarActivity {
                     startActivity(sendBRIntent);
                 }
 
-                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("VIEW BLOOD REQUEST")){
+                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("VIEW BLOOD REQUESTS")){
                     Toast.makeText(
                             getApplicationContext(),
                             listDataHeader.get(groupPosition)
@@ -191,7 +178,7 @@ public class HomeActivity extends ActionBarActivity {
                     startActivity(manageReqIntent);
                 }
 
-                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEARCH HOSPITALS")){
+                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEARCH NEARBY HOSPITALS")){
                     Toast.makeText(
                             getApplicationContext(),
                             listDataHeader.get(groupPosition)
@@ -213,7 +200,7 @@ public class HomeActivity extends ActionBarActivity {
                     }
                 }
 
-                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEARCH BLOOD BANKS")){
+                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("SEARCH NEARBY BLOOD BANKS")){
                     Toast.makeText(
                             getApplicationContext(),
                             listDataHeader.get(groupPosition)
@@ -370,6 +357,11 @@ public class HomeActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_home, menu);
@@ -449,25 +441,25 @@ public void onRestart() {
         //for titles
         listDataHeader=new ArrayList<String>();
         listDataChild=new HashMap<String,List<String>>();
-        listDataHeader.add("SEARCH DONORS");
+        listDataHeader.add("SEARCH BLOOD DONORS");
         List<String> home_list = new ArrayList<String>();
 
 
         listDataHeader.add("BLOOD REQUEST");
         List<String> home_list1=new ArrayList<String>();
-        home_list1.add("SEND BLOOD REQUEST");
-        home_list1.add("VIEW BLOOD REQUEST");
+        home_list1.add("SEND A BLOOD REQUEST");
+        home_list1.add("VIEW BLOOD REQUESTS");
         home_list1.add("MANAGE BLOOD REQUESTS");
 
         listDataHeader.add("SEARCH DONATION CAMPS");
         List<String> home_list2 =new ArrayList<String>();
-        home_list2.add("SEARCH HOSPITALS");
-        home_list2.add("SEARCH BLOOD BANKS");
+        home_list2.add("SEARCH NEARBY HOSPITALS");
+        home_list2.add("SEARCH NEARBY BLOOD BANKS");
 
-        listDataHeader.add("HELPLINE");
+        listDataHeader.add("HELPLINE NUMBERS");
         List<String> home_list3 =new ArrayList<String>();
 
-        listDataHeader.add("TIPS");
+        listDataHeader.add("TIPS FOR DONORS");
         List<String> home_list4 =new ArrayList<String>();
 
         listDataHeader.add("FAQs");
@@ -481,11 +473,11 @@ public void onRestart() {
         listDataHeaderImages = new ArrayList<Integer>();
         //listDataChildImages = new HashMap<Integer,List<Integer>>();
 
-        listDataHeaderImages.add(R.drawable.globe);
+        listDataHeaderImages.add(R.drawable.globetransparent);
         //List<String> home_list = new ArrayList<String>();
 
 
-        listDataHeaderImages.add(R.drawable.users);
+        listDataHeaderImages.add(R.drawable.usertransparent);
 
         listDataHeaderImages.add(R.drawable.plus);
         listDataHeaderImages.add(R.drawable.phone1);

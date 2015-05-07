@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  * Created by Yeshwant on 04/04/2015.
  */
 public class TabsPagerAdapter extends FragmentStatePagerAdapter {
-    private String[] tabs = { "Edit Profile", "Edit Notification",  };
+    private String[] tabs = { "Edit Profile", "Edit Notification"};
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
     }

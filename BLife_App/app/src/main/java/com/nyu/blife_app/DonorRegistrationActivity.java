@@ -85,7 +85,7 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
                     conc_radio = get_date +","+get_BloodGroup + ","+id_gender + ","+get_weight+","+ id_disease+","+id_pregnant;
                     Log.d("hello", conc_radio);
 
-              
+
 
 
                 validateWeight(get_weight);
@@ -316,6 +316,14 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             bDateTextView.setText(dateFormat.format(cal.getTime()));
             bDateTextView.setError(null);
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(DonorRegistrationActivity.this, RegistrationActivity.class);
+        startActivity(back_Intent);
+        finish();
     }
 
 

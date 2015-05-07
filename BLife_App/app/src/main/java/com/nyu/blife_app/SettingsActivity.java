@@ -1,5 +1,6 @@
 package com.nyu.blife_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -17,5 +18,13 @@ public class SettingsActivity extends ActionBarActivity {
         getActionBar();
 
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(SettingsActivity.this, HomeActivity.class);
+        startActivity(back_Intent);
+        finish();
     }
 }

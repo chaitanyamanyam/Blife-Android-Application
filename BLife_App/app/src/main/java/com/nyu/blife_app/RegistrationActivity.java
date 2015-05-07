@@ -259,6 +259,13 @@ public class RegistrationActivity extends ActionBarActivity {
 
 
     @Override
+    public void onBackPressed() {
+        Intent back_Intent = new Intent(RegistrationActivity.this, WelcomeActivity.class);
+        startActivity(back_Intent);
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_registration, menu);
