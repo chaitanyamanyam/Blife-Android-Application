@@ -13,10 +13,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class SearchResultVBRActvity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_search_result_vbr_actvity);
         // Execute RemoteDataTask AsyncTask
         new RemoteDataTask().execute();
@@ -155,28 +158,47 @@ public class SearchResultVBRActvity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_result_vbr_actvity, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        Intent back_Intent = new Intent(SearchResultVBRActvity.this, ViewBloodRequestActivity.class);
-//        startActivity(back_Intent1`);
-//        finish();
-//    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "you selected settings", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(SearchResultVBRActvity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"you selected sign up button", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }

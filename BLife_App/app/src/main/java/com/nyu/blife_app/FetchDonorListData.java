@@ -1,8 +1,6 @@
 package com.nyu.blife_app;
 
-/**
- * Created by Pranav Gunner on 4/18/2015.
- */
+
 public class FetchDonorListData {
 
     private String title;

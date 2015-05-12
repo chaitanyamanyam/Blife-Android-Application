@@ -4,539 +4,230 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.telephony.SmsManager;
+import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class DonorsListScreenActivity extends ActionBarActivity {
 
-    //    private RecyclerView donorsListView;
-//    private RecyclerView.Adapter dListAdapter;
-//    private RecyclerView.LayoutManager dListLayoutManager;
     Button backbtn;
+
 
     // Declare Variables
     ListView listview;
     List<ParseUser> ob;
     ProgressDialog mProgressDialog;
     ArrayAdapter<String> adapter;
-
+    String blood, city;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donors_list_screen);
-        Intent i1 = getIntent();
-        //final String[] blood =  new String[]{i1.getStringExtra("blood")};
-        //String city = i1.getStringExtra("city");
-        //String zip = i1.getStringExtra("zip");
-
-        //String[] search = {blood, city, zip};
 
         backbtn = (Button) findViewById(R.id.donorListBackbtn);
-        // listview = (ListView) findViewById(R.id.listview);
+        listview = (ListView) findViewById(R.id.listview);
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent backIntent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
-                startActivity(backIntent);
+                //Intent backIntent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
+                //startActivity(backIntent);
                 finish();               // review it
             }
         });
 
         Toast.makeText(getBaseContext(), "Reached Successfully", Toast.LENGTH_SHORT).show();
-
-
+        Intent i1 = getIntent();
+        city = i1.getStringExtra("city");
+        blood = i1.getStringExtra("blood");
         CustomAdapter adapter = new CustomAdapter(this, new ParseQueryAdapter.QueryFactory<ParseUser>() {
+
             // Log.i("output blood", blood[0]);
             @Override
             public ParseQuery<ParseUser> create() {
-                // String blood1 = blood[0];
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
-                //Log.i("output blood", blood[0]);
                 query.whereEqualTo("userType", "Donor");
-                // query.whereEqualTo("bloodGroup", blood1);
+                query.whereEqualTo("bloodGroup", blood);
+                query.whereEqualTo("city", city);
+
+                try {
+                    if(query.count() != 0)
+                    {
+                        Toast.makeText(DonorsListScreenActivity.this, "Donors found..",Toast.LENGTH_SHORT).show();
+                        return query;
+                    }
+                    else
+                    {
+                        Toast.makeText(DonorsListScreenActivity.this,"there are no donors",Toast.LENGTH_LONG).show();
+
+                        new SweetAlertDialog(DonorsListScreenActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(" No Donor Found ! ")
+                                .setCustomImage(R.mipmap.phone)
+                                .setContentText("No donor found based on search results...")
+                                .setConfirmText("  OK  ")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.cancel();
+                                        finish();
+                                    }
+                                })
+                                .show();
+                    }
+                    //return query;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 return query;
             }
         });
 
-        listview = (ListView) findViewById(R.id.listview);
         listview.setAdapter(adapter);
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final String user_phone;
+                TextView view1 = (TextView) view.findViewById(R.id.item_title);
+                String donorname = view1.getText().toString();
+                Toast.makeText(getBaseContext(), "Text view clicked. Donor Name. - " + donorname , Toast.LENGTH_SHORT).show();
+
+                user_phone = CustomAdapter.get_number_info();
+                Toast.makeText(getBaseContext(), "Donor Phone number - " + user_phone , Toast.LENGTH_SHORT).show();
+
+
+                new SweetAlertDialog(DonorsListScreenActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                        .setTitleText("Contact donor?")
+                        .setCustomImage(R.mipmap.phone)
+                        .setContentText("Your contact details will be shared with the Donor. You will be contacted at the " +
+                                "discretion of the Donor. Do you want to proceed?")
+                        .setConfirmText(" Send SMS ")
+                        .setCancelText("  Cancel  ")
+                        .showCancelButton(true)
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sendSMSMessage(user_phone);
+                                sDialog.cancel();
+
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .show();
+            }
+        });
     }
-//        adapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Message> () {
-//            @Override
-//            public void onLoading() {
-//                mProgressDialog = new ProgressDialog(DonorsListScreenActivity.this);
-//                // Set progressdialog title
-//                mProgressDialog.setTitle("loading all donors");
-//                // Set progressdialog message
-//                mProgressDialog.setMessage("Loading...");
-//                mProgressDialog.setIndeterminate(false);
-//                // Show progressdialog
-//                mProgressDialog.show();
-//                // show progress bar
-//            }
-//
-//            @Override
-//            public void onLoaded(List<Message> messages, Exception e) {
-//                mProgressDialog.dismiss();
-//            }
+
+    protected void sendSMSMessage(String phone)
+    {
+        Log.i("Send SMS", "in sms");
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String phoneNo =  (currentUser.getNumber("phoneNumber")).toString();
+        String curr_fname = currentUser.getString("firstName");
+        String curr_lname = currentUser.getString("lastName");
+        String curr_name = curr_fname + curr_lname;
+        Toast.makeText(getBaseContext(), "user number - " + phoneNo, Toast.LENGTH_SHORT).show();
 
 
-//
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phone, null, "You are requested for blood donation as you are registered as donor on BLife. " +
+                    "You can contact on - " + phoneNo  , null, null);
+            Toast.makeText(getBaseContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(),"SMS failed, please try again.",Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
 
 
-//        donorsListView = (RecyclerView) findViewById(R.id.recyclerDonorsList);
-//        donorsListView.setHasFixedSize(true);
-//        LinearLayoutManager dListlayoutManager = new LinearLayoutManager(getApplication());
-////        donorsListView.setLayoutManager(dListlayoutManager);
-//        Intent i1 = getIntent();
-//        final String blood =  i1.getStringExtra("blood");
-//        final String city = i1.getStringExtra("city");
-//        final String zip = i1.getStringExtra("zip");
-//        new Runnable(){
-//            public void run(){
-//                new RemoteDataTask().execute();
-//            }
-//
-//        };
-
-    //  new RemoteDataTask().execute();
-    // new RemoteDataTask().execute();
-    //   ParseQueryAdapter<ParseObject> mainAdapter;
-//        CustomAdapter urgentTodosAdapter;
-
-    // Initialize main ParseQueryAdapter
-//     mainAdapter = new ParseQueryAdapter<ParseObject>(this, "User");
-//      mainAdapter.setTextKey("firstName");
-    // Initialize ListView and set initial view to mainAdapter
-//      listView = (ListView) findViewById(R.id.text1);
-//       listView.setAdapter(mainAdapter);
-//     mainAdapter.loadObjects();
-
-// Set the ListActivity's adapter to be the PQA
-    //     setListAdapter(mainAdapter);
-//        final ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-//        query.whereEqualTo("bloodGroup", blood);
-//        query.whereEqualTo("city", city);
-//        query.whereEqualTo("zipCode", zip);
-//        query.whereEqualTo("userType", "Donor");
-//        query.getFirstInBackground(new GetCallback<ParseObject>() {
-//            public void done(ParseObject object, com.parse.ParseException e) {
-//                if (object == null) {
-//                    Log.d("score", "The getFirst request failed.");
-//                } else {
-//
-//                    String fName = object.getString("firstName");
-//                    Number phone = object.getNumber("phoneNumber");
-//                    Log.d("score", "Retrieved the object.");
-//                }
-//            }
-//
-//
-//        });
-
-
-//        // Add donors dynamically with database
-//        FetchDonorListData itemsData[] = { new FetchDonorListData("Phone",R.mipmap.phone),
-//                new FetchDonorListData("Phone",R.mipmap.phone1),
-//                new FetchDonorListData("Phone",R.mipmap.plus),
-//                new FetchDonorListData("Phone",R.mipmap.right),
-//                new FetchDonorListData("Phone",R.mipmap.blackpoint),
-//                new FetchDonorListData("Phone",R.mipmap.globe),
-//                new FetchDonorListData("Phone",R.mipmap.welcomepic),
-//                new FetchDonorListData("Phone",R.mipmap.search),
-//                new FetchDonorListData("Phone",R.mipmap.phone),
-//                new FetchDonorListData("Phone",R.mipmap.phone)};
-//
-//
-//        // creation of adapter
-//
-//        dListAdapter = new RecyclerViewAdapter(this,itemsData);
-//
-//        donorsListView.setAdapter(dListAdapter);
-//        donorsListView.setItemAnimator(new DefaultItemAnimator());
-
-
-//    // RemoteDataTask AsyncTask
-//    private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            // Create a progressdialog
-//            mProgressDialog = new ProgressDialog(DonorsListScreenActivity.this);
-//            // Set progressdialog title
-//            mProgressDialog.setTitle("loading all donors");
-//            // Set progressdialog message
-//            mProgressDialog.setMessage("Loading...");
-//            mProgressDialog.setIndeterminate(false);
-//            // Show progressdialog
-//            mProgressDialog.show();
-//        }
-//
-//        // RemoteDataTask AsyncTask
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//
-//            // Locate the class table named "Country" in Parse.com
-//            ParseQuery<ParseUser> query = ParseUser.getQuery();
-//
-//            try {
-//                ob = query.find();
-//
-//            } catch (com.parse.ParseException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void result) {
-//            listview = (ListView) findViewById(R.id.listview);
-//            // Pass the results into an ArrayAdapter
-//            adapter = new ArrayAdapter<String>(DonorsListScreenActivity.this,
-//                    R.layout.listview_item);
-//            // Retrieve object "name" from Parse.com database
-//            for (ParseObject User : ob) {
-//                adapter.add((String) User.get("firstName"));
-//            }
-//            // Binds the Adapter to the ListView
-//            listview.setAdapter(adapter);
-//
-//            // Close the progressdialog
-//            mProgressDialog.dismiss();
-//            // Capture button clicks on ListView items
-//
-//        }
-//    }
+    @Override
+    public void onBackPressed() {
+//        Intent back_Intent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
+//        startActivity(back_Intent);
+        finish();
+    }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_donors, menu);
-        return true;
-    }
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
 
-    @Override
-    public void onBackPressed() {
-        Intent back_Intent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
-        startActivity(back_Intent);
-        finish();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(DonorsListScreenActivity.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(DonorsListScreenActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(DonorsListScreenActivity.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
+
+
 }
-
-
-
-
-//package com.nyu.blife_app;
-//
-//import android.app.ProgressDialog;
-//import android.content.Intent;
-//import android.os.Bundle;
-//import android.support.v7.app.ActionBarActivity;
-//import android.view.Menu;
-//import android.view.MenuItem;
-//import android.view.View;
-//import android.widget.ArrayAdapter;
-//import android.widget.Button;
-//import android.widget.ListView;
-//import android.widget.Toast;
-//
-//import com.parse.ParseQuery;
-//import com.parse.ParseQueryAdapter;
-//import com.parse.ParseUser;
-//
-//import java.util.List;
-//
-//
-//public class DonorsListScreenActivity extends ActionBarActivity {
-//
-//    //    private RecyclerView donorsListView;
-////    private RecyclerView.Adapter dListAdapter;
-////    private RecyclerView.LayoutManager dListLayoutManager;
-//    Button backbtn;
-//
-//    // Declare Variables
-//    ListView listview;
-//    List<ParseUser> ob;
-//    ProgressDialog mProgressDialog;
-//    ArrayAdapter<String> adapter;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_donors_list_screen);
-//        Intent i1 = getIntent();
-//        //final String[] blood =  new String[]{i1.getStringExtra("blood")};
-//        //String city = i1.getStringExtra("city");
-//        //String zip = i1.getStringExtra("zip");
-//
-//
-//        backbtn = (Button) findViewById(R.id.donorListBackbtn);
-//
-//        donorsListView = (RecyclerView) findViewById(R.id.recyclerDonorsList);
-//        donorsListView.setHasFixedSize(true);
-//        LinearLayoutManager dListlayoutManager = new LinearLayoutManager(getApplication());
-//        donorsListView.setLayoutManager(dListlayoutManager);
-//
-//        // Add donors dynamically with database
-//        FetchDonorListData itemsData[] = { new FetchDonorListData("Phone",R.mipmap.phone),
-//                new FetchDonorListData("Phone",R.mipmap.phone1),
-//                new FetchDonorListData("Phone",R.mipmap.plus),
-//                new FetchDonorListData("Phone",R.mipmap.right),
-//                new FetchDonorListData("Phone",R.mipmap.blackpoint),
-//                new FetchDonorListData("Phone",R.drawable.globe),
-//                new FetchDonorListData("Phone",R.mipmap.welcomepic),
-//                new FetchDonorListData("Phone",R.mipmap.search),
-//                new FetchDonorListData("Phone",R.mipmap.phone),
-//                new FetchDonorListData("Phone",R.mipmap.phone)};
-//
-//
-//        // creation of adapter
-//
-//        dListAdapter = new RecyclerViewAdapter(this,itemsData);
-//
-//        donorsListView.setAdapter(dListAdapter);
-//        donorsListView.setItemAnimator(new DefaultItemAnimator());
-//
-//
-//        backbtn = (Button) findViewById(R.id.donorListBackbtn);
-//       // listview = (ListView) findViewById(R.id.listview);
-//        backbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent backIntent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
-//                startActivity(backIntent);
-//                finish();               // review it
-//            }
-//        });
-//
-//        Toast.makeText(getBaseContext(), "Reached Successfully", Toast.LENGTH_SHORT).show();
-//
-//
-//
-//        CustomAdapter adapter = new CustomAdapter(this, new ParseQueryAdapter.QueryFactory<ParseUser>() {
-//           // Log.i("output blood", blood[0]);
-//            @Override
-//            public ParseQuery<ParseUser> create() {
-//               // String blood1 = blood[0];
-//                ParseQuery<ParseUser> query = ParseUser.getQuery();
-//                //Log.i("output blood", blood[0]);
-//                query.whereEqualTo("userType", "Donor");
-//               // query.whereEqualTo("bloodGroup", blood1);
-//                return query;
-//            }
-//        });
-//
-//        listview = (ListView) findViewById(R.id.listview);
-//        listview.setAdapter(adapter);
-//
-//    }
-////        adapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Message> () {
-////            @Override
-////            public void onLoading() {
-////                mProgressDialog = new ProgressDialog(DonorsListScreenActivity.this);
-////                // Set progressdialog title
-////                mProgressDialog.setTitle("loading all donors");
-////                // Set progressdialog message
-////                mProgressDialog.setMessage("Loading...");
-////                mProgressDialog.setIndeterminate(false);
-////                // Show progressdialog
-////                mProgressDialog.show();
-////                // show progress bar
-////            }
-////
-////            @Override
-////            public void onLoaded(List<Message> messages, Exception e) {
-////                mProgressDialog.dismiss();
-////            }
-//
-//
-////
-//
-//
-////        donorsListView = (RecyclerView) findViewById(R.id.recyclerDonorsList);
-////        donorsListView.setHasFixedSize(true);
-////        LinearLayoutManager dListlayoutManager = new LinearLayoutManager(getApplication());
-//////        donorsListView.setLayoutManager(dListlayoutManager);
-////        Intent i1 = getIntent();
-////        final String blood =  i1.getStringExtra("blood");
-////        final String city = i1.getStringExtra("city");
-////        final String zip = i1.getStringExtra("zip");
-////        new Runnable(){
-////            public void run(){
-////                new RemoteDataTask().execute();
-////            }
-////
-////        };
-//
-//        //  new RemoteDataTask().execute();
-//        // new RemoteDataTask().execute();
-//        //   ParseQueryAdapter<ParseObject> mainAdapter;
-////        CustomAdapter urgentTodosAdapter;
-//
-//        // Initialize main ParseQueryAdapter
-////     mainAdapter = new ParseQueryAdapter<ParseObject>(this, "User");
-////      mainAdapter.setTextKey("firstName");
-//        // Initialize ListView and set initial view to mainAdapter
-////      listView = (ListView) findViewById(R.id.text1);
-////       listView.setAdapter(mainAdapter);
-////     mainAdapter.loadObjects();
-//
-//// Set the ListActivity's adapter to be the PQA
-//        //     setListAdapter(mainAdapter);
-////        final ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-////        query.whereEqualTo("bloodGroup", blood);
-////        query.whereEqualTo("city", city);
-////        query.whereEqualTo("zipCode", zip);
-////        query.whereEqualTo("userType", "Donor");
-////        query.getFirstInBackground(new GetCallback<ParseObject>() {
-////            public void done(ParseObject object, com.parse.ParseException e) {
-////                if (object == null) {
-////                    Log.d("score", "The getFirst request failed.");
-////                } else {
-////
-////                    String fName = object.getString("firstName");
-////                    Number phone = object.getNumber("phoneNumber");
-////                    Log.d("score", "Retrieved the object.");
-////                }
-////            }
-////
-////
-////        });
-//
-//
-////        // Add donors dynamically with database
-////        FetchDonorListData itemsData[] = { new FetchDonorListData("Phone",R.mipmap.phone),
-////                new FetchDonorListData("Phone",R.mipmap.phone1),
-////                new FetchDonorListData("Phone",R.mipmap.plus),
-////                new FetchDonorListData("Phone",R.mipmap.right),
-////                new FetchDonorListData("Phone",R.mipmap.blackpoint),
-////                new FetchDonorListData("Phone",R.mipmap.globe),
-////                new FetchDonorListData("Phone",R.mipmap.welcomepic),
-////                new FetchDonorListData("Phone",R.mipmap.search),
-////                new FetchDonorListData("Phone",R.mipmap.phone),
-////                new FetchDonorListData("Phone",R.mipmap.phone)};
-////
-////
-////        // creation of adapter
-////
-////        dListAdapter = new RecyclerViewAdapter(this,itemsData);
-////
-////        donorsListView.setAdapter(dListAdapter);
-////        donorsListView.setItemAnimator(new DefaultItemAnimator());
-//
-//
-////    // RemoteDataTask AsyncTask
-////    private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
-////        @Override
-////        protected void onPreExecute() {
-////            super.onPreExecute();
-////            // Create a progressdialog
-////            mProgressDialog = new ProgressDialog(DonorsListScreenActivity.this);
-////            // Set progressdialog title
-////            mProgressDialog.setTitle("loading all donors");
-////            // Set progressdialog message
-////            mProgressDialog.setMessage("Loading...");
-////            mProgressDialog.setIndeterminate(false);
-////            // Show progressdialog
-////            mProgressDialog.show();
-////        }
-////
-////        // RemoteDataTask AsyncTask
-////        @Override
-////        protected Void doInBackground(Void... params) {
-////
-////            // Locate the class table named "Country" in Parse.com
-////            ParseQuery<ParseUser> query = ParseUser.getQuery();
-////
-////            try {
-////                ob = query.find();
-////
-////            } catch (com.parse.ParseException e) {
-////                e.printStackTrace();
-////            }
-////            return null;
-////        }
-////
-////        @Override
-////        protected void onPostExecute(Void result) {
-////            listview = (ListView) findViewById(R.id.listview);
-////            // Pass the results into an ArrayAdapter
-////            adapter = new ArrayAdapter<String>(DonorsListScreenActivity.this,
-////                    R.layout.listview_item);
-////            // Retrieve object "name" from Parse.com database
-////            for (ParseObject User : ob) {
-////                adapter.add((String) User.get("firstName"));
-////            }
-////            // Binds the Adapter to the ListView
-////            listview.setAdapter(adapter);
-////
-////            // Close the progressdialog
-////            mProgressDialog.dismiss();
-////            // Capture button clicks on ListView items
-////
-////        }
-////    }
-//
-//
-//
-//    @Override
-//    public void onBackPressed() {
-//        Intent back_Intent = new Intent(DonorsListScreenActivity.this, SearchDonorsActivity.class);
-//        startActivity(back_Intent);
-//        finish();
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_search_donors, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//}

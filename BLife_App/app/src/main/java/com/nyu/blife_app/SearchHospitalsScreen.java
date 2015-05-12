@@ -1,19 +1,14 @@
 package com.nyu.blife_app;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.location.*;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -53,27 +47,29 @@ public class SearchHospitalsScreen extends ActionBarActivity {
         final String url;
         //List<String> data_location=new ArrayList<String>();
         final String data_location;
+        final String business_number;
 
-        public Business(String name, String url, String data_location) {
+
+        public Business(String name, String url, String data_location,String p_number) {
             this.name = name;
             this.url = url;
             this.data_location = data_location;
+            this.business_number=p_number;
         }
 
         @Override
-        public String toString()
-        {
-
+        public String toString() {
             return name;
         }
 
 
-        public String getLocation()
-        {
-
+        public String getLocation() {
             return data_location;
         }
-        public String getnumber(){
+        public String get_number(){
+            return business_number;
+        }
+        public String get_url(){
             return url;
         }
 
@@ -156,31 +152,26 @@ public class SearchHospitalsScreen extends ActionBarActivity {
                                 float2 = m.group(2);
                                 Log.v("Code", float1 + " " + float2);
                             }
-                            String add="";
+                            String display_address="";
                             try {
-                                JSONObject for_address=new JSONObject(biz.getLocation());
-                                 add =for_address.getString("display_address");
-                                add=add.replaceAll("[\\[\\]\"]","");
+                                JSONObject get_address=new JSONObject(biz.getLocation());
+                                 display_address=get_address.optString("display_address");
+                                display_address=display_address.replaceAll("[\\[|\\]|//\"]","");
 
-                                Log.v("Getting address555",add);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            String uri = String.format(Locale.ENGLISH,
-                                    "http://maps.google.com/maps?daddr=%f,%f",
-                                    Float.valueOf(float1), Float.valueOf(float2));
-//                            Intent intent44 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-//                            intent44.setClassName("com.google.android.apps.maps",
-//                                    "com.google.android.maps.MapsActivity");
-//                            startActivity(intent44);
 
-                            Intent it=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
-                            it.putExtra("lat",float1);
-                            it.putExtra("long",float2);
-                            it.putExtra("num",biz.getnumber());
-                            it.putExtra("address",add);
-                            it.putExtra("name",biz.toString());
-                            startActivity(it);
+                            String uri = String.format(Locale.ENGLISH,"http://maps.google.com/maps?daddr=%f,%f",
+                                    Float.valueOf(float1), Float.valueOf(float2));
+                            Intent to_selected=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
+                            to_selected.putExtra("lat",float1);
+                            to_selected.putExtra("long",float2);
+                            to_selected.putExtra("address",display_address);
+                            to_selected.putExtra("phone",biz.get_number());
+                            to_selected.putExtra("url",biz.get_url());
+                            to_selected.putExtra("name",biz.toString());
+                            startActivity(to_selected);
                         }
                     });
 
@@ -207,7 +198,9 @@ public class SearchHospitalsScreen extends ActionBarActivity {
 
             JSONObject hospital_returned = hospitals_json.getJSONObject(i);
             hospitalNames.add(new Business(hospital_returned.optString("name"),
-                    hospital_returned.optString("phone"), hospital_returned.optString("location")));
+                    hospital_returned.optString("mobile_url"),
+                    hospital_returned.optString("location"),
+                    hospital_returned.getString("phone")));
             Log.v("Inside Json232", hospital_returned.optString("location"));
 
 
@@ -221,32 +214,63 @@ public class SearchHospitalsScreen extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        Intent back_Intent = new Intent(SearchHospitalsScreen.this, HomeActivity.class);
-        startActivity(back_Intent);
+        //Intent back_Intent = new Intent(SearchHospitalsScreen.this, HomeActivity.class);
+        //startActivity(back_Intent);
         finish();
     }
+
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_hospitals_screen, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(SearchHospitalsScreen.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(SearchHospitalsScreen.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(SearchHospitalsScreen.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     public void onLocationChanged(Location location) {

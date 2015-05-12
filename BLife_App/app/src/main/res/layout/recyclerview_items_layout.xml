@@ -19,6 +19,16 @@
         android:layout_margin="3dp"
         android:gravity="left|center_vertical"
         android:layout_weight="1" />
+    <TextView
+        android:id="@+id/item_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textStyle="normal"
+        android:textSize="16sp"
+        android:layout_margin="3dp"
+        android:gravity="left|center_vertical"
+        android:layout_weight="1" />
 
     <!-- icon -->
     <ImageView

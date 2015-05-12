@@ -25,9 +25,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class DonorRegistrationActivity extends ActionBarActivity implements DatePickerDialog.OnDateSetListener {
@@ -73,55 +77,139 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
         registerbtnDonor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String get_date = bDateTextView.getText().toString();
-                final String get_weight = edittextWeight.getText().toString();
-                final String get_BloodGroup = spinnerselectBloodGroup.getSelectedItem().toString();
-
+                String get_date = bDateTextView.getText().toString();
+                String get_weight = edittextWeight.getText().toString();
+                String get_BloodGroup = spinnerselectBloodGroup.getSelectedItem().toString();
 
 
                 String id_gender = addListenerRadioGroupGender();
                 String id_disease = addListenerRadioGroupDisease();
                 String id_pregnant = addListenerRadioGroupPregnant();
-                    conc_radio = get_date +","+get_BloodGroup + ","+id_gender + ","+get_weight+","+ id_disease+","+id_pregnant;
-                    Log.d("hello", conc_radio);
-
-
-
+                conc_radio = get_date +","+get_BloodGroup + ","+id_gender + ","+get_weight+","+ id_disease+","+id_pregnant;
+                Log.d("hello", conc_radio);
 
                 validateWeight(get_weight);
                 validateBloodGroup(get_BloodGroup);
-
-                if(!get_weight.isEmpty() && !get_BloodGroup.isEmpty())
-                {
-                    if((!id_gender.equals("")) && (!id_disease.equals("")) && (!id_pregnant.equals("")))
+                final Intent intent = getIntent();
+                if (intent.getStringExtra("User")!= null){
+                    if(!get_weight.isEmpty() && !get_BloodGroup.isEmpty())
                     {
-                        if(isMobileAvailable(donorregistration)) {
+                        if((!id_gender.equals("")) && ((!id_disease.equals("")) && (!id_disease.equals("YES"))) &&
+                                ((!id_pregnant.equals("")) && (!id_pregnant.equals("YES"))))
+                        {
+                            if(isMobileAvailable(donorregistration)) {
+                                sendSMSMessage(get_phoneno, get_reg_details, conc_radio);
+                            }
+                            else
+                            {
+                                new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("SMS Failed..")
+                                        .setContentText("Check for Cellular Connectivity.")
+                                        .setConfirmText("   OK   ")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.cancel();
 
-
-                            sendSMSMessage(get_phoneno, get_reg_details, conc_radio);
+                                            }
+                                        })
+                                        .show();
+                            }
                         }
                         else
                         {
-                            Toast.makeText(getApplicationContext(),"No GSM Connectivity"
-                                    ,Toast.LENGTH_SHORT).show();
-                        }
+                            new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Donor Registration Failed!!")
+                                    .setContentText("All fields are required. A Donor cannot be pregnant or have a Disease.")
+                                    .setConfirmText("   OK   ")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.cancel();
 
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                    else
+                    {
+                        new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Donor Registration Failed!!")
+                                .setContentText("Please check Details..")
+                                .setConfirmText("   OK   ")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.cancel();
+
+                                    }
+                                })
+                                .show();
                     }
                 }
-                else
-                {
-                    new AlertDialog.Builder(DonorRegistrationActivity.this).setTitle("Donor Registration Failed.")
-                            .setMessage("Please check Details.")
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            }).create()
-                            .show();
-                }
+                else {
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    currentUser.fetchInBackground();
+                    Number phone = currentUser.getNumber("phoneNumber");
 
+                    if(!get_weight.isEmpty() && !get_BloodGroup.isEmpty())
+                    {
+                        if((!id_gender.equals("")) && ((!id_disease.equals("")) && (!id_disease.equals("YES"))) &&
+                                ((!id_pregnant.equals("")) && (!id_pregnant.equals("YES"))))
+                        {
+                            if(isMobileAvailable(donorregistration))
+                            {
+                                sendDonorSMSMessage( phone, conc_radio);
+                            }
+                            else
+                            {
+                                new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("SMS Failed..")
+                                        .setContentText("Check for Cellular Connectivity.")
+                                        .setConfirmText("   OK   ")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.cancel();
+
+                                            }
+                                        })
+                                        .show();
+                            }
+                        }
+                        else
+                        {
+                            new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Donor Registration Failed!!")
+                                    .setContentText("All fields are required. A Donor cannot be pregnant or have a Disease.")
+                                    .setConfirmText("   OK   ")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.cancel();
+
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                    else
+                    {
+                        new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Donor Registration Failed!!")
+                                .setContentText("Please check Details..")
+                                .setConfirmText("   OK   ")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.cancel();
+
+                                    }
+                                })
+                                .show();
+                    }
+                }
             }
 
 
@@ -140,13 +228,7 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             }
             private String validateWeight(String get_weight) {
 
-                if (get_weight.equals("") ){
-                    edittextWeight.requestFocus();
-                    edittextWeight.setError("Required Field! ");
-                    edittextWeight.setText("");
-                }
-                else if(Integer.parseInt(get_weight)<110 )
-                {
+                if (get_weight.equals("") ||  Integer.parseInt(get_weight)<110 ){
                     edittextWeight.requestFocus();
                     edittextWeight.setError("Enter valid data.(Less than 110lbs)");
                     edittextWeight.setText("");
@@ -211,7 +293,7 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             return genderName;
         }
 
-     }
+    }
 
     protected void sendSMSMessage(String phone,String send_details, String send_radio_values)
     {
@@ -223,26 +305,67 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null,my_name , null, null);
             Toast.makeText(getBaseContext(), "SMS sent.",Toast.LENGTH_LONG).show();
-            //Toast.makeText(getBaseContext(), my_name+send_details,Toast.LENGTH_LONG).show();
             Intent intent1 = new Intent(this, RegistrationAuthenticationActivity.class);
             intent1.putExtra("Donor_Code", my_name);
             intent1.putExtra("Donor_User",send_details);
             intent1.putExtra("Type",type_user);
+            intent1.putExtra("Acceptor_Code","New");
             intent1.putExtra("donor_details", send_radio_values);
 
             startActivity(intent1);
         } catch (Exception e) {
-            Toast.makeText(getBaseContext(),"SMS failed, please try again.",Toast.LENGTH_LONG).show();
+            new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("SMS Failed..")
+                    .setContentText("Check for Cellular Connectivity.")
+                    .setConfirmText("   OK   ")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+
+                        }
+                    })
+                    .show();
             e.printStackTrace();
         }
     }
 
+    protected void sendDonorSMSMessage(Number phone, String send_radio_values)
+    {
+        Log.i("Send SMS", "");
+        Number phoneNo = phone;
+        String type_user ="Donor";
+        String my_name = generatePIN();
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(String.valueOf(phoneNo), null,my_name , null, null);
+            Toast.makeText(getBaseContext(), "SMS sent.",Toast.LENGTH_LONG).show();
+            Intent intent1 = new Intent(this, RegistrationAuthenticationActivity.class);
+            intent1.putExtra("Donor_Code", my_name);
+            intent1.putExtra("Type",type_user);
+            intent1.putExtra("donor_details", send_radio_values);
+            startActivity(intent1);
+        } catch (Exception e) {
+            new SweetAlertDialog(DonorRegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("SMS Failed..")
+                    .setContentText("Check for Cellular Connectivity.")
+                    .setConfirmText("   OK   ")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+
+                        }
+                    })
+                    .show();
+            e.printStackTrace();
+        }
+    }
     public String generatePIN()
     {
-        int x = (int)(Math.random() * 9);
-        x = x + 1;
-        String randomPIN = (x + "") + ( ((int)(Math.random()*1000)) + "" );
-        return randomPIN;
+        int x=9000;
+        int full=(int)((Math.random()*x)+1000);
+        return String.valueOf(full);
     }
 
     //method to display a Date Picker Dialog Fragment on click of 'Date Of Birth' TextView
@@ -295,7 +418,7 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
         Calendar cal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
 
 
-       final Calendar now = new GregorianCalendar();
+        final Calendar now = new GregorianCalendar();
         int age = now.get(Calendar.YEAR) - cal.get(Calendar.YEAR);
         if ((cal.get(Calendar.MONTH) > now.get(Calendar.MONTH))
                 || (cal.get(Calendar.MONTH) == now.get(Calendar.MONTH)
@@ -321,32 +444,13 @@ public class DonorRegistrationActivity extends ActionBarActivity implements Date
 
     @Override
     public void onBackPressed() {
-        Intent back_Intent = new Intent(DonorRegistrationActivity.this, RegistrationActivity.class);
-        startActivity(back_Intent);
+        //Intent back_Intent = new Intent(DonorRegistrationActivity.this, RegistrationActivity.class);
+        //startActivity(back_Intent);
         finish();
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_donor_registration, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public static Boolean isMobileAvailable(Context appcontext) {
         TelephonyManager tel = (TelephonyManager) appcontext.getSystemService(Context.TELEPHONY_SERVICE);

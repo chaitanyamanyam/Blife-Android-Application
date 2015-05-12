@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by ramakrishnacmanyam on 4/19/15.
- */
+
 public class SearchHosListAdapter extends ArrayAdapter<String>  {
 
 

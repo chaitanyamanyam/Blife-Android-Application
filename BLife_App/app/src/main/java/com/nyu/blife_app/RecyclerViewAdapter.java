@@ -1,11 +1,9 @@
 package com.nyu.blife_app;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +11,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-/**
- * Created by Pranav Gunner on 4/18/2015.
- */
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private Context context;
+
+    //private ParseQueryAdapter.QueryFactory<ParseUser> queryFactory;
     private FetchDonorListData[] itemsData;
 
     public RecyclerViewAdapter(Context context,FetchDonorListData[] itemsData)
     {
         this.context = context;
+
         this.itemsData = itemsData;
     }
 
@@ -48,7 +49,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
         viewHolder.txtViewTitle.setText("Donors list is here");
-        Picasso.with(viewHolder.imgViewIcon.getContext()).load(itemsData[position].getImageUrl()).into(viewHolder.imgViewIcon);
+        Picasso.with(viewHolder.imgViewIcon.getContext()).load(R.mipmap.phone).into(viewHolder.imgViewIcon);
 
         viewHolder.txtViewTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,3 +107,4 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     }
 }
+

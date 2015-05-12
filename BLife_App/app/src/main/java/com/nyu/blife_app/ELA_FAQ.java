@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by ramakrishnacmanyam on 4/25/15.
- */
+
 public class ELA_FAQ extends BaseExpandableListAdapter {
 
     private Context _context;

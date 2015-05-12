@@ -1,111 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-
-    android:background="#de99ac"     >
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Requestor Details"
-        android:id="@+id/txtDonorsList"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="BLOOD REQUEST DETAILS"
+        android:id="@+id/txtDonorDetail"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:background="#34495e"
         android:padding="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="20sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
     <TextView
+        android:id="@+id/single_tvname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Requestor Name:"
-        android:textSize="25sp"
-        android:layout_marginTop="80dp"
-        android:height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:text="Name:"
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/txtDonorDetail"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+         />
     <TextView
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="name"
-        android:textSize="25sp"
-        android:layout_marginTop="80dp"
-        android:height="50dp"
-        android:layout_marginLeft="210dp"
-        android:id="@+id/name" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/single_name"
+        android:textColor="@android:color/black"
+        android:layout_above="@+id/single_tvbg"
+        android:layout_toRightOf="@+id/single_tvdate"
+        android:layout_toEndOf="@+id/single_tvdate" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Blood Group:"
-        android:textSize="25sp"
-        android:layout_marginTop="250dp"
-        android:height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/single_tvbg"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/single_tvname"
+        android:layout_below="@+id/single_tvname"
+         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="blood"
-        android:textSize="25sp"
-        android:layout_marginTop="250dp"
-        android:height="50dp"
-        android:layout_marginLeft="200dp"
-        android:id="@+id/blood" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/single_bg"
+        android:textColor="@android:color/black"
+        android:layout_above="@+id/single_tvcity"
+        android:layout_alignLeft="@+id/single_name"
+        android:layout_alignStart="@+id/single_name" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="City:"
-        android:textSize="25sp"
-        android:layout_marginTop="125dp"
-        android:height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignLeft="@+id/single_tvname"
+        android:layout_below="@+id/single_tvbg"
+        android:layout_marginTop="10dp"
+        android:id="@+id/single_tvcity" />
     <TextView
-        android:id="@+id/city"
-        android:layout_width="fill_parent"
+        android:id="@+id/single_city"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="city"
-        android:textSize="25sp"
-        android:layout_marginTop="125dp"
-        android:layout_marginLeft="200dp" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignTop="@+id/single_tvcity"
+        android:layout_alignLeft="@+id/single_bg"
+        android:layout_alignStart="@+id/single_bg" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hospital:"
-        android:textSize="25sp"
-        android:layout_marginTop="170dp"
-        android:height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/single_tvhos"
+        android:layout_alignLeft="@+id/single_tvname"
+        android:layout_below="@+id/single_tvcity"
+        android:layout_marginTop="10dp"/>
     <TextView
-        android:id="@+id/location"
+        android:id="@+id/single_hos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="170dp"
-        android:layout_marginLeft="200dp"
-
+        android:textColor="@android:color/black"
         android:text="location"
-        android:textSize="25sp"
-       />
+        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignTop="@+id/single_tvhos"
+        android:layout_alignLeft="@+id/single_bg"
+        android:layout_alignStart="@+id/single_bg" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number:"
-        android:textSize="25sp"
-        android:layout_marginTop="210dp"
-        android:height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:text="Require Before: "
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/single_tvdate"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/single_tvname"
+        android:layout_below="@+id/single_tvhos"/>
     <TextView
-        android:id="@+id/cellNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="number"
-        android:textSize="25sp"
-        android:layout_marginTop="210dp"
-        android:layout_marginLeft="200dp" />
+        android:id="@+id/single_date"
+        android:text="date"
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_above="@+id/lnrlayoutdialog"
+        android:layout_alignLeft="@+id/single_hos"
+        android:layout_alignStart="@+id/single_hos"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/lnrlayoutdialog"
+        android:layout_below="@+id/single_tvdate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/btncontact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Contact Request Sender"
+            android:textSize="15sp"
+            android:gravity="center|center_horizontal"
+            android:textColor="#ffffffff"
+            style="@style/ButtonText"
+            android:background="@drawable/button_style"
+            android:layout_gravity="center_horizontal"
+            />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

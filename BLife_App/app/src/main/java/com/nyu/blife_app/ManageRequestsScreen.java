@@ -4,80 +4,109 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
+import com.nyu.blife_app.models.BloodRequest;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 
 
 public class ManageRequestsScreen extends ActionBarActivity {
 
     private RecyclerView cardMRView;
     private cardMRAdapter cardreqAdapter;
-
+    private ParseQueryAdapter<ParseObject> mainAdapter;
+    private ManageRequestAdapter allBloodRequest;
+    private ListView listview;
+    String userName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_requests_screen);
+        ParseObject.registerSubclass(BloodRequest.class);
+        listview = (ListView) findViewById(R.id.list);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-
-        cardMRView = (RecyclerView)findViewById(R.id.card_view);
-        fab.attachToRecyclerView(cardMRView);
-        cardMRView.setHasFixedSize(true);
-        LinearLayoutManager dListlayoutManager = new LinearLayoutManager(getApplication());
-        cardMRView.setLayoutManager(dListlayoutManager);
-
-        FetchDonorListData itemsData[] = { new FetchDonorListData("Phone",R.mipmap.phone),
-                new FetchDonorListData("Phone",R.mipmap.phone1),
-                new FetchDonorListData("Phone",R.mipmap.plus),
-                new FetchDonorListData("Phone",R.mipmap.right)};
-
-        cardreqAdapter = new cardMRAdapter(this, itemsData);
-        cardMRView.setAdapter(cardreqAdapter);
-        cardMRView.setItemAnimator(new DefaultItemAnimator());
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        ParseUser current_user = ParseUser.getCurrentUser();
+        current_user.fetchInBackground();
+        userName = current_user.getString("username");
+        Log.d("this username is", userName);
+        ManageRequestAdapter adapter = new ManageRequestAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>(){
             @Override
-            public void onClick(View v) {
-                Intent fab_intent = new Intent(ManageRequestsScreen.this, SendBloodRequestActivity.class);
-                startActivity(fab_intent);
-                finish();
+            public ParseQuery<ParseObject> create() {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("BloodRequest");
+                query.whereEqualTo("username", userName);
+                return query;
             }
         });
 
+        listview.setAdapter(adapter);
+    }
 
+
+    public void onBackPressed() {
+        finish();
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_manage_requests_screen, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
-    public void onBackPressed() {
-        Intent back_Intent = new Intent(ManageRequestsScreen.this, HomeActivity.class);
-        startActivity(back_Intent);
-        finish();
-    }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(ManageRequestsScreen.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(ManageRequestsScreen.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(ManageRequestsScreen.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
 }

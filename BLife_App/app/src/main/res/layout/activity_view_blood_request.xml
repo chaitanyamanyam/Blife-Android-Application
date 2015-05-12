@@ -1,30 +1,28 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#de99ac">
+    android:background="#de99ac"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="SEARCH BLOOD REQUESTS"
+        android:text="RECEIVED BLOOD REQUESTS"
         android:id="@+id/txtViewBR"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:background="#34495e"
         android:padding="10dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:textSize="20sp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"/>
+        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Search Parameters"
+        android:text="Filter Search"
         android:id="@+id/txtViewSearchBR"
         android:gravity="center_horizontal"
         android:textColor="@android:color/black"
@@ -34,41 +32,15 @@
         android:layout_alignParentStart="true"
         android:textSize="20sp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Filter by"
-        android:id="@+id/filterSearchBR"
-        android:textColor="@android:color/black"
-        android:padding="16dp"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/txtViewSearchBR"
-        android:layout_marginLeft="16dp" />
-
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/searchBG"
         android:entries="@array/Blood_Group"
         android:padding="16dp"
-        android:layout_margin="10dp"
-        android:layout_marginRight="32dp"
-        android:layout_below="@+id/filterSearchBR"
+        android:layout_margin="5dp"
+        android:layout_below="@+id/txtViewSearchBR"
         />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="OR"
-        android:id="@+id/OR"
-        android:textColor="@android:color/black"
-        android:padding="10dp"
-        android:layout_below="@+id/searchBG"
-        android:layout_centerHorizontal="true" />
-
 
     <Spinner
         android:layout_width="match_parent"
@@ -76,11 +48,11 @@
         android:id="@+id/searchCity"
         android:entries="@array/Cities"
         android:padding="16dp"
-        android:layout_margin="10dp"
-        android:layout_marginRight="32dp"
-        android:layout_below="@+id/OR"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/searchBG"
        />
-
 
         <Button
             android:id="@+id/btnSearchReq"
@@ -90,12 +62,37 @@
             android:paddingLeft="40dp"
             android:text="Search Request"
             android:gravity="center|center_horizontal"
-            android:layout_marginTop="15dp"
             android:textColor="#ffffffff"
             style="@style/ButtonText"
             android:background="@drawable/button_style"
             android:layout_below="@+id/searchCity"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center" />
 
+    <ListView
+        android:id="@+id/listview_view_BR"
+        android:layout_below="@+id/btnSearchReq"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#de99ac"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="3dp"
+        />
 
-</RelativeLayout>
+    <!--<com.melnykov.fab.FloatingActionButton-->
+        <!--android:id="@+id/fab1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:src="@mipmap/plus_icon_white"-->
+        <!--fab:fab_colorNormal="@color/primary"-->
+        <!--fab:fab_colorPressed="@color/accent_pressed"-->
+        <!--fab:fab_colorRipple="@color/ripple"-->
+        <!--android:layout_margin="10dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignRight="@+id/listview_view_BR"-->
+        <!--android:layout_alignEnd="@+id/listview_view_BR" />-->
+
+</LinearLayout>

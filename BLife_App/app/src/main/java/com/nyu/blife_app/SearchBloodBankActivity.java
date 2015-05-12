@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,10 +43,12 @@ public class SearchBloodBankActivity extends ActionBarActivity {
                 final String url;
                 //List<String> data_location=new ArrayList<String>();
                 final String data_location;
-                public Bloodbank(String name, String url, String data_location) {
+                final String in_num;
+                public Bloodbank(String name, String url, String data_location,String num) {
                     this.name = name;
                     this.url = url;
                     this.data_location=data_location;
+                    this.in_num=num;
                 }
 
                 @Override
@@ -56,13 +60,14 @@ public class SearchBloodBankActivity extends ActionBarActivity {
                 public String getLocation(){
                     return data_location;
                 }
-
-                public String getnumber(){
+                public String get_number(){
+                    return in_num;
+                }
+                public String get_url(){
                     return url;
                 }
 
             }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,30 +145,32 @@ public class SearchBloodBankActivity extends ActionBarActivity {
                                         Log.v("Code", float1 + " " + float2);
                                         // System.out.print("("+float1.toString()+")"+"("+float2.toString()+")"+"\n");
                                     }
-                                    String uri = String.format(Locale.ENGLISH,
-                                            "http://maps.google.com/maps?daddr=%f,%f",
-                                            Float.valueOf(float1), Float.valueOf(float2));
-                                    String add="";
+                                    String display_address="";
                                     try {
-                                        JSONObject for_address=new JSONObject(biz.getLocation());
-                                        add =for_address.getString("display_address");
-                                        add=add.replaceAll("[\\[\\]\"]","");
+                                        JSONObject get_address=new JSONObject(biz.getLocation());
+                                        display_address=get_address.optString("display_address");
+//                                display_address=display_address.replaceAll("[//[//]//\"]","");
+                                        display_address=display_address.replaceAll("[\\[|\\]|//\"]","");
 
-                                        Log.v("Getting address555",add);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-//                                    Intent intent66 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-//                                    intent66.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-//                                    startActivity(intent66);
 
-                                    Intent it_blood=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
-                                    it_blood.putExtra("lat", float1);
-                                    it_blood.putExtra("long", float2);
-                                    it_blood.putExtra("num", biz.getnumber());
-                                    it_blood.putExtra("address", add);
-                                    it_blood.putExtra("name", biz.toString());
-                                    startActivity(it_blood);
+                                    String uri = String.format(Locale.ENGLISH,
+                                            "http://maps.google.com/maps?daddr=%f,%f",
+                                            Float.valueOf(float1), Float.valueOf(float2));
+//                            Intent intent44 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                            intent44.setClassName("com.google.android.apps.maps",
+//                                    "com.google.android.maps.MapsActivity");
+//                            startActivity(intent44);
+                                    Intent to_selected=new Intent(getApplicationContext(),SelectedHospitalDetails.class);
+                                    to_selected.putExtra("lat",float1);
+                                    to_selected.putExtra("long",float2);
+                                    to_selected.putExtra("address",display_address);
+                                    to_selected.putExtra("phone",biz.get_number());
+                                    to_selected.putExtra("url",biz.get_url());
+                                    to_selected.putExtra("name",biz.toString());
+                                    startActivity(to_selected);
 
                                 }
                             });
@@ -191,7 +198,9 @@ public class SearchBloodBankActivity extends ActionBarActivity {
 
                     JSONObject hospital_returned = blood_bank_json.getJSONObject(i);
                     BloodBankNames.add(new Bloodbank(hospital_returned.optString("name"),
-                            hospital_returned.optString("phone"), hospital_returned.optString("location")));
+                            hospital_returned.optString("mobile_url"),
+                            hospital_returned.optString("location"),
+                            hospital_returned.optString("phone")));
                     Log.v("Inside Json232",hospital_returned.optString("location"));
 
 
@@ -206,32 +215,63 @@ public class SearchBloodBankActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        Intent back_Intent = new Intent(SearchBloodBankActivity.this, HomeActivity.class);
-        startActivity(back_Intent);
+        //Intent back_Intent = new Intent(SearchBloodBankActivity.this, HomeActivity.class);
+        //startActivity(back_Intent);
         finish();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_blood_bank_screen, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(SearchBloodBankActivity.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+            case R.id.log_out:
+                ParseUser.logOut();
 
-        return super.onOptionsItemSelected(item);
+                Intent intent = new Intent(SearchBloodBankActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(SearchBloodBankActivity.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
+        return true;
+    }
+
     public void onLocationChanged(Location location) {
         lat = (float) (location.getLatitude());
         lng = (float) (location.getLongitude());

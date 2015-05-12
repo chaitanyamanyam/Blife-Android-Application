@@ -54,13 +54,18 @@
     <application
         android:name=".Application"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme" >
         <activity
             android:name=".WelcomeActivity"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
         <activity
             android:name=".SearchDonorsActivity"
@@ -69,6 +74,7 @@
         <activity
             android:name=".DonorsListScreenActivity"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".SendBloodRequestActivity"
@@ -89,22 +95,27 @@
         <activity
             android:name=".SearchBloodBankActivity"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".HelplineNumbersScreen"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".FAQsScreen"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".DonorRegistrationActivity"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".RegistrationAuthenticationActivity"
@@ -114,10 +125,11 @@
             android:name=".LoginActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize|stateHidden" >
+
         </activity>
         <activity
             android:name=".HomeActivity"
-            android:icon="@drawable/logo" >
+            android:label="@string/title_activity_home" >
 
         </activity>
         <activity
@@ -126,7 +138,8 @@
         </activity>
         <activity
             android:name=".HealthTipsActivity"
-            android:icon="@drawable/logo" >
+            android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name=".AboutBLifeActivity"
@@ -138,14 +151,14 @@
         </activity>
         <activity
             android:name=".RequestVerificationActivity"
-            android:label="@string/title_activity_request_verification"
+            android:label="@string/app_name"
             android:parentActivityName=".ManageRequestsScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.nyu.blife_app.ManageRequestsScreen" />
         </activity>
 
-        <!-- code for setting up Parse's "Push notifications" -->
+        <!-- code for setting up Parse "Push notifications" -->
 
         <service android:name="com.parse.PushService" />
 
@@ -155,8 +168,11 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+
+        <!--customized Broadcast Receiver for push notifications that extends the ParsePushBroadcastReceiver-->
         <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
+            android:name="com.nyu.blife_app.receivers.NotificationReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -164,6 +180,7 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -177,23 +194,21 @@
         </receiver>
 
         <!-- replace @drawable/push_icon with your push icon identifier -->
-
         <meta-data
             android:name="com.parse.push.notification_icon"
-            android:resource="@drawable/logo" />
+            android:resource="@drawable/app_logo" />
+
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDVWwLxRu5FIgvcBmdAeO4U4yfh0M2Tobs" />
-        <meta-data
-            android:name="com.parse.push.notification_icon"
-            android:resource="@drawable/logo" />
 
         <activity
             android:name=".SearchResultVBRActvity"
-            android:label="@string/title_activity_search_result_vbractvity"
+            android:label="@string/app_name"
             android:parentActivityName=".ViewBloodRequestActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -201,17 +216,17 @@
         </activity>
         <activity
             android:name=".SingleItemView"
-            android:label="@string/title_activity_single_item_view" >
+            android:label="@string/app_name"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.DeviceDefault.Dialog.NoActionBar">
         </activity>
         <activity
-            android:name=".models.Searchhotels"
-            android:label="@string/title_activity_searchhotels" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".Search_Hotel"
+            android:label="@string/app_name" >
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
+
     </application>
 
 </manifest>

@@ -15,13 +15,11 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.w3c.dom.Text;
+import com.parse.ParseUser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,40 +28,47 @@ import java.util.regex.Pattern;
 public class SelectedHospitalDetails extends ActionBarActivity {
 
     private GoogleMap googleMap;
-    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_hospital_details);
-        GPStracker my_gps=new GPStracker(SelectedHospitalDetails.this);
-        Intent k=getIntent();
-        String ki=k.getStringExtra("lat");
-        String ki3=k.getStringExtra("long");
-        final String number_from=k.getStringExtra("num");
-        String display_address=k.getStringExtra("address");
-        String display_name=k.getStringExtra("name");
-        LatLng hospital_location=new LatLng(Double.parseDouble(ki),Double.parseDouble(ki3));
+        Intent full=getIntent();
+        String loc_lat=full.getStringExtra("lat");
+        String loc_long=full.getStringExtra("long");
+        String loc_address=full.getStringExtra("address");
+        final String loc_phone=full.getStringExtra("phone");
+        String loc_name=full.getStringExtra("name");
+        String loc_url=full.getStringExtra("url");
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
-        TextView add_number=(TextView)findViewById(R.id.textView_shd);
-        TextView add_address=(TextView)findViewById(R.id.textView_shd_address);
-        LatLng my_locat_coord=new LatLng(my_gps.getLatitude(),my_gps.getLongitude());
-        Log.v("Full ","Addreess");
-//        TextView display_add=(TextView)findViewById(R.id.textView_add);
-        if (googleMap!=null)
-        {
-            Marker hamburg = googleMap.addMarker(new MarkerOptions().position(hospital_location)
-                    .title(display_name));
-            Marker my_location=googleMap.addMarker(new MarkerOptions().position(my_locat_coord).
-                    title("My Location").icon(BitmapDescriptorFactory.
-                    defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hospital_location, 15));
-//            display_add.setText(display_address);
+        GPStracker selcted_my=new GPStracker(this);
+        LatLng location_cord=new LatLng(Double.parseDouble(loc_lat),Double.parseDouble(loc_long));
+        TextView set_address=(TextView)findViewById(R.id.address);
+        TextView set_phone=(TextView)findViewById(R.id.number_call);
+        LatLng my_latlng=new LatLng(selcted_my.getLatitude(),selcted_my.getLongitude());
 
-            add_address.setText("Address:"+display_address);
-            add_number.setText("Phone Number :"+number_from);
 
+        if(googleMap!=null){
+            Marker location=googleMap.addMarker(new MarkerOptions().position(location_cord).title(loc_name));
+            Marker my_location=googleMap.addMarker(new MarkerOptions().position(my_latlng).title("My Location")
+            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            set_address.setText(loc_address);
+            set_phone.setText("Phone No: +1 "+loc_phone);
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location_cord, 15));
+
+
+        }
+
+        set_phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel: " + loc_phone));
+                startActivity(intent);
+            }
+        });
 //        try {
 //            // Loading map
 //            initilizeMap();
@@ -72,17 +77,7 @@ public class SelectedHospitalDetails extends ActionBarActivity {
 //            e.printStackTrace();
 //        }
 
-        }
-        add_number.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Uri call_number=Uri.parse("tel:" + number_from);
-                Intent intent_dialer = new Intent(Intent.ACTION_DIAL,call_number);
-                startActivity(intent_dialer);
-            }
-        });
-     }
+    }
 
 //    /**
 //     * function to load map. If map is not created it will create it for you
@@ -108,7 +103,12 @@ public class SelectedHospitalDetails extends ActionBarActivity {
 //    }
 
 
-
+    @Override
+    public void onBackPressed() {
+        //Intent back_Intent = new Intent(SearchBloodBankActivity.this, HomeActivity.class);
+        //startActivity(back_Intent);
+        finish();
+    }
 
 
 
@@ -116,22 +116,53 @@ public class SelectedHospitalDetails extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_selected_hospital_details, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(SelectedHospitalDetails.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(SelectedHospitalDetails.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(SelectedHospitalDetails.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
 }

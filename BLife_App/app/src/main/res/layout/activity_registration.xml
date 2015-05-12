@@ -35,7 +35,7 @@
             android:layout_below="@+id/txtRegistration">
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:textColorHint="#34495e"
+                android:textColorHint="#FF233240"
                 app:met_errorColor="#34495e"
                 app:met_baseColor="#34495e"
                 app:met_primaryColor="#FFD41022"
@@ -49,7 +49,7 @@
                 android:inputType="textPersonName" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:textColorHint="#34495e"
+                android:textColorHint="#FF233240"
                 app:met_errorColor="#34495e"
                 app:met_baseColor="#34495e"
                 app:met_primaryColor="#FFD41022"
@@ -64,7 +64,7 @@
                 />
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:textColorHint="#34495e"
+                android:textColorHint="#FF233240"
                 app:met_errorColor="#34495e"
                 app:met_baseColor="#34495e"
                 app:met_primaryColor="#FFD41022"

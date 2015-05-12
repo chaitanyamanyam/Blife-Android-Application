@@ -3,9 +3,13 @@ package com.nyu.blife_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
+
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +39,19 @@ public class FAQsScreen extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_faqs_screen, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
+
     }
 
 
@@ -52,7 +67,20 @@ public class FAQsScreen extends ActionBarActivity {
         listDataChild=new HashMap<String,List<String>>();
         listDataHeader.add("What is B-life??");
         List<String> wib=new ArrayList<String>();
-        wib.add("B-life is an app connecting donors and receivers using social network elements");
+        wib.add("B-life is an app connecting donors and receivers and provides a communication platform and reduces the " +
+                "gap of communication between them");
+
+
+        listDataHeader.add("Who can donate blood?" );
+        List<String> wib9=new ArrayList<String>();
+        wib9.add("In most states, donors must be age 17 or older. Some states allow donation by " +
+                "16-year-olds with a signed parental consent form. Donors must weigh at least 110 " +
+                "pounds and be in good health");
+
+        listDataHeader.add("Is it safe to give blood?");
+        List<String> wib10=new ArrayList<>();
+        wib10.add("Donating blood is a safe process. Each donor’s blood is collected through a new," +
+                " sterile needle that is used once and then discarded.");
 
         listDataHeader.add("How many gallons of blood I can donate?? ");
         List<String> wib1=new ArrayList<String>();
@@ -79,7 +107,6 @@ public class FAQsScreen extends ActionBarActivity {
                 "and 16 weeks (112 days) between double red cell donations.");
 
 
-
         listDataHeader.add("Can I get HIV by donating blood?");
         List<String> wib5=new ArrayList<String>();
         wib5.add("No. Sterile procedures and disposable equipment are used during the process");
@@ -89,6 +116,7 @@ public class FAQsScreen extends ActionBarActivity {
         wib6.add("Every 7 days up to 24 apheresis donations can be made in a year. " +
                 "Some apheresis donations can generate two or three adult-sized platelet " +
                 "transfusion doses from one donation.");
+
         listDataHeader.add("Will it hurt when you insert the needle?");
         List<String> wib7=new ArrayList<String>();
         wib7.add("Only for a moment. Pinch the fleshy, soft underside of your arm."+
@@ -99,17 +127,6 @@ public class FAQsScreen extends ActionBarActivity {
         wib8.add("The plasma from your donation is replaced within about 24 hours. Red cells need"+
                " about four to six weeks for complete replacement. That’s why at least eight weeks"+
                         " are required between whole blood donations.");
-
-        listDataHeader.add("Who can donate blood?" );
-        List<String> wib9=new ArrayList<String>();
-        wib9.add("In most states, donors must be age 17 or older. Some states allow donation by " +
-                "16-year-olds with a signed parental consent form. Donors must weigh at least 110 " +
-                "pounds and be in good health");
-
-        listDataHeader.add("Is it safe to give blood?");
-        List<String> wib10=new ArrayList<>();
-        wib10.add("Donating blood is a safe process. Each donor’s blood is collected through a new," +
-                " sterile needle that is used once and then discarded.");
 
         listDataHeader.add("What happens if I donate blood and realize afterward that I shouldn’t" +
                 " have because I may have been exposed to HIV or another disease?");
@@ -149,18 +166,43 @@ public class FAQsScreen extends ActionBarActivity {
         listDataChild.put(listDataHeader.get(13),wib13);
 
     }
+
+
+
+
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(FAQsScreen.this, SettingsActivity.class);
+                startActivity(i1);
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(FAQsScreen.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(FAQsScreen.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
+
 }

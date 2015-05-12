@@ -8,20 +8,13 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
-/**
- * Created by ramakrishnacmanyam on 4/26/15.
- */
+
 public class GpsLocationReceiver extends BroadcastReceiver {
 
     Context context;
     @Override
     public void onReceive(Context context, Intent intent) {
-//        if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
-//            Toast.makeText(context, "in android.location.PROVIDERS_CHANGED",
-//                    Toast.LENGTH_SHORT).show();
-//            Intent pushIntent = new Intent(context, HomeActivity.class);
-//            context.startService(pushIntent);
-//        }
+
 
         ContentResolver contentResolver = context.getContentResolver();
 

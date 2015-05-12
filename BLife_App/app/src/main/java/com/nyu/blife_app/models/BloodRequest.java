@@ -50,9 +50,13 @@ public class BloodRequest extends ParseObject {
         return getString("requestStatus");
     }
 
-    public int getUserId(){
-        return getInt("userId");
+    public String getUserName(){
+        return getString("username");
 
+    }
+
+    public int getVerificationCode(){
+        return getInt("verificationCode");
     }
 
     /**setter methods */
@@ -88,9 +92,12 @@ public class BloodRequest extends ParseObject {
         put("requestStatus", requestStatus);
     }
 
-    public void setUserId(int userId){
-        put("userId", userId);
+    public void setUserName(String username){
+        put("username", username);
     }
 
+    public void setVerificationCode(int verificationCode){
+        put("verificationCode",verificationCode);
+    }
 }
 

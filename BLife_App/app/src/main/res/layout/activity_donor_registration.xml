@@ -81,13 +81,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/radioGroupGender"
             android:orientation="horizontal"
->
+            android:weightSum="2">
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_donor_chk_male"
                 android:id="@+id/radioMale"
-
                 android:gravity="center_vertical|left"
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1" />
@@ -96,8 +95,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_donor_chk_female"
+
                 android:id="@+id/radioFemale"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="46dp"
                 android:layout_weight="1" />
 
         </RadioGroup>
@@ -141,6 +141,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/radioGroupDisease"
             android:orientation="horizontal"
+            android:weightSum="2"
             >
             <RadioButton
                 android:layout_width="wrap_content"

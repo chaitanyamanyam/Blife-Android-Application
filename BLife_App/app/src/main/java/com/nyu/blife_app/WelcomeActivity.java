@@ -19,6 +19,8 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class WelcomeActivity extends Activity {
 
@@ -31,24 +33,6 @@ public class WelcomeActivity extends Activity {
         setContentView(R.layout.activity_welcome);
 
         check_network_status();
-        /** enabling the database */
-        //Parse.enableLocalDatastore(this);
-       // Parse.initialize(getApplicationContext());
-        Parse.initialize(this, "6qUFzAHfl9bXRzzDlBegiXZx0Tw5dc29m3jXmnHt", "TS6OswWh6HwKQm2uCJxqfprlyrP2mfpkmwkx3Vg9");
-
-        //code for setting up Parse's "Push notifications"
-        //ParseInstallation.getCurrentInstallation().saveInBackground();
-
-       /* ParsePush.subscribeInBackground("", new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-                } else {
-                    Log.e("com.parse.push", "failed to subscribe for push", e);
-                }
-            }
-        });*/
 
         /*calling the User class from models */
         ParseObject.registerSubclass(User.class);
@@ -125,43 +109,31 @@ public class WelcomeActivity extends Activity {
 
     public void check_network_status() {
         if (isNetworkStatusAvialable(getApplicationContext())) {
-           // Toast.makeText(getApplicationContext(), "internet available", Toast.LENGTH_SHORT).show();
+        //do nothing if true
         } else {
-            //Toast.makeText(getApplicationContext(), "internet is not available", Toast.LENGTH_SHORT).show();
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-            // set title
-            alertDialogBuilder.setTitle("Network Connectivity Problem");
+            new SweetAlertDialog(WelcomeActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Network Problem!!")
+                    .setContentText("Please connect to Internet!!")
+                    .setConfirmText("    OK    ")
+                    .setCancelText("  Cancel  ")
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+                            finish();
 
-            // set dialog message
-            alertDialogBuilder
-                    .setMessage("Application not able to connect to the Internet")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, close
-                            // current activity
-                            WelcomeActivity.this.finish();
                         }
                     })
-                    .setNegativeButton("Try Again", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            dialog.cancel();
-                            check_network_status();
-
-
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+                            finish();
                         }
-                    });
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
-
-
+                    })
+                    .show();
         }
     }
 }

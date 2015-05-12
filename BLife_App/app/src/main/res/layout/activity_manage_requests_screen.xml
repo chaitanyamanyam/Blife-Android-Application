@@ -19,8 +19,16 @@
         android:background="#34495e"
         android:padding="10dp"
         android:textSize="20sp" />
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDonorsList"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        />
 
-    <android.support.v7.widget.RecyclerView
+   <!-- <android.support.v7.widget.RecyclerView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_gravity="center"
@@ -43,5 +51,5 @@
         fab:fab_colorPressed="@color/accent_pressed"
         fab:fab_colorRipple="@color/ripple"
          />
-
+-->
 </RelativeLayout>

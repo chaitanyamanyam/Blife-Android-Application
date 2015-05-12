@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/tools"
@@ -13,14 +14,16 @@
     android:id="@+id/card"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardBackground="@android:color/black">
+    -->
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:clickable="true"
         android:padding="10dp"
-
+        android:background="@drawable/border_recycler"
         >
         <TextView
             android:id="@+id/reqname"
@@ -31,6 +34,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
             android:layout_alignParentTop="true"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             />
 
 
@@ -129,19 +134,7 @@
             android:layout_alignLeft="@+id/reqContact"
             android:layout_alignStart="@+id/reqContact" />
 
-        <TextView
-            android:id="@+id/reqID"
-            android:gravity="center"
-            android:text="Request ID"
-            android:focusable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:padding="2dp"
-            android:layout_below="@+id/reqStatus"
-            android:layout_alignLeft="@+id/reqStatus"
-            android:layout_alignStart="@+id/reqStatus" />
+
 
         <TextView
             android:id="@+id/textViewCity"
@@ -195,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="9179606377"
+            android:text="Phone"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:padding="2dp"
             android:layout_gravity="center_horizontal"
@@ -214,51 +207,38 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:padding="2dp"
             android:layout_gravity="center_horizontal"
-            android:layout_above="@+id/reqID"
+            android:layout_alignTop="@+id/reqStatus"
             android:layout_alignLeft="@+id/textViewphone"
             android:layout_alignStart="@+id/textViewphone" />
 
-        <TextView
-            android:id="@+id/textViewId"
-            android:gravity="center"
-            android:focusable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:text="Name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:padding="2dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_alignBottom="@+id/reqID"
-            android:layout_alignLeft="@+id/textViewstatus"
-            android:layout_alignStart="@+id/textViewstatus" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/lnrlayoutmr"
-            android:layout_below="@+id/reqID"
+            android:layout_below="@+id/textViewstatus"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="15dp">
 
-            <Button
-                android:id="@+id/btnDeleteReq"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Delete Request"
-                android:textSize="15sp"
-                android:gravity="center|center_horizontal"
-                android:textColor="#ffffffff"
-                style="@style/ButtonText"
-                android:background="@drawable/button_style"
-                android:layout_gravity="center_horizontal"
-                />
-
+    <Button
+        android:id="@+id/btnDeleteReq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Delete Request"
+        android:textSize="15sp"
+        android:gravity="center|center_horizontal"
+        android:textColor="#ffffffff"
+        style="@style/ButtonText"
+        android:background="@drawable/button_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/reqStatus"
+        android:layout_centerHorizontal="true" />
         </LinearLayout>
 
-
-    </RelativeLayout>
+</RelativeLayout>
+<!--
 </android.support.v7.widget.CardView>
+-->

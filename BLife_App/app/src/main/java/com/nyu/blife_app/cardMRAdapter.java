@@ -13,9 +13,7 @@ import android.widget.Toast;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-/**
- * Created by Pranav Gunner on 4/23/2015.
- */
+
 public class cardMRAdapter extends RecyclerView.Adapter<cardMRAdapter.ViewHolder> {
 
     private static FetchDonorListData[] itemsData;
@@ -91,7 +89,7 @@ public class cardMRAdapter extends RecyclerView.Adapter<cardMRAdapter.ViewHolder
             super(itemLayoutView);
 
 
-            card = (CardView) itemLayoutView.findViewById(R.id.card);
+           // card = (CardView) itemLayoutView.findViewById(R.id.card);
             reqname = (TextView) itemLayoutView.findViewById(R.id.reqname);
             textViewName = (TextView) itemLayoutView.findViewById(R.id.textViewName);
             textViewCity = (TextView) itemLayoutView.findViewById(R.id.textViewCity);
@@ -99,8 +97,7 @@ public class cardMRAdapter extends RecyclerView.Adapter<cardMRAdapter.ViewHolder
             textViewDate = (TextView) itemLayoutView.findViewById(R.id.textViewDate);
             textViewphone = (TextView) itemLayoutView.findViewById(R.id.textViewphone);
             textViewstatus = (TextView) itemLayoutView.findViewById(R.id.textViewstatus);
-            textViewId = (TextView) itemLayoutView.findViewById(R.id.textViewId);
-            deleteRequest = (Button) itemLayoutView.findViewById(R.id.btnDeleteReq);
+//            deleteRequest = (Button) itemLayoutView.findViewById(R.id.btnDeleteReq);
 
             //final String phone_number = textViewphone.getText().toString();
             itemLayoutView.setClickable(true);

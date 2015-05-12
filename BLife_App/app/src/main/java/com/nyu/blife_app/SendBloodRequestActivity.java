@@ -24,7 +24,10 @@ import android.widget.Toast;
 import com.nyu.blife_app.models.BloodRequest;
 import com.nyu.blife_app.models.User;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -71,7 +74,6 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 final String get_message = etMessage.getText().toString();
                 final String get_donorcity = donorCity.getSelectedItem().toString();
                 final String get_donorBloodGroup = donorBloodGroup.getSelectedItem().toString();
-                //final String get_date = tvRequireddate.getText()
 
                 final boolean name_bool = validateName(get_name);
                 final boolean hospital_bool = validateHospital(get_hospital);
@@ -79,44 +81,61 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 validatedonorCity(get_donorcity);
                 validateBloodGroup(get_donorBloodGroup);
 
-
                 final String user_details = get_name + "," + get_hospital + "," + get_donorcity + "," +
-                            get_donorBloodGroup + "," + get_message + "," + get_phone;
+                        get_donorBloodGroup + "," + get_message + "," + get_phone;
 
 
+                if(storeDate != null) {
+                    if (!get_donorcity.equals("CITY") && !get_donorBloodGroup.equals("BLOOD GROUP")) {
+                        if (name_bool && hospital_bool && phone_bool) {
+                            //Database posting of request and send verification code
 
-                if(!get_donorcity.equals("CITY") && !get_donorBloodGroup.equals("BLOOD GROUP"))
-                {
-                    if(name_bool && hospital_bool && phone_bool)
-                    {
-                        //Database posting of request and send verification code
-                        Toast.makeText(getBaseContext(), "message - " + get_message, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getBaseContext(),"Request has been posted!", Toast.LENGTH_SHORT).show();
+                            if (isMobileAvailable(sendbloodrequest)) {
+                                verifySMSMessage(user_details, storeDate);
+                            } else {
+                                new SweetAlertDialog(SendBloodRequestActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("SMS Failed..")
+                                        .setContentText("Check for Cellular Connectivity.")
+                                        .setConfirmText("   OK   ")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.cancel();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } else {
+                            new SweetAlertDialog(SendBloodRequestActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Check Details.")
+                                    .setContentText("Enter valid Details..")
+                                    .setConfirmText("   OK   ")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.cancel();
 
-                        //Intent verify_intent = new Intent(SendBloodRequestActivity.this, RequestVerificationActivity.class);
-                        if(isMobileAvailable(sendbloodrequest)) {
-
-
-                            verifySMSMessage(user_details, storeDate );
+                                        }
+                                    })
+                                    .show();
                         }
-                        else{
-                            Log.v("Send Blood Request ","No GSM Connectivity");
-                            Toast.makeText(getApplicationContext(),"No GSM Connectivity",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        //startActivity(verify_intent);
 
+                    } else {
+                        new SweetAlertDialog(SendBloodRequestActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("All fields mandatory")
+                                .setConfirmText("OK")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.cancel();
+                                    }
+                                }).show();
                     }
-                    else
-                    {
-                        Toast.makeText(getBaseContext(),"Error", Toast.LENGTH_SHORT).show();
-                    }
-
                 }
                 else
                 {
                     new SweetAlertDialog(SendBloodRequestActivity.this, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("Enter all mandatory Details!")
+                            .setTitleText("Date empty..")
                             .setConfirmText("OK")
                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
@@ -134,7 +153,6 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 if(get_donorBloodGroup.equals("BLOOD GROUP"))
                 {
                     donorBloodGroup.requestFocus();
-                    Toast.makeText(getBaseContext(),"Select valid Blood Group entry.",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -147,7 +165,6 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 if(get_donorcity.equals("CITY"))
                 {
                     donorCity.requestFocus();
-                    Toast.makeText(getBaseContext(), "Select proper City", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -155,29 +172,23 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 }
             }
 
-            private boolean validatedonorPhone(String get_phone) {
-
-
-                if (get_phone.equals("")){
-                    etDonorphone.requestFocus();
-                    etDonorphone.setError("Required Field!");
-                    return false;
-                }
-                else if (!get_phone.matches("[0-9]{10}")) {
+            private boolean validatedonorPhone(String get_phone)
+            {
+                if ((get_phone.equals("")) && (!get_phone.matches("[0-9]{10}")))
+                {
                     etDonorphone.requestFocus();
                     etDonorphone.setError("Enter valid phone number");
-                    etDonorphone.setText("");
                     return false;
                 }
                 else
                 {
                     return true;
                 }
-
             }
 
             private boolean validateHospital(String get_hospital) {
-                if (get_hospital.equals("")) {
+                if (get_hospital.equals(""))
+                {
                     etHospital.requestFocus();
                     etHospital.setError("Required Field! (Enter valid Hospital name)");
                     return false;
@@ -188,14 +199,16 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
                 }
             }
 
-            private boolean validateName(String get_name) {
-                if (get_name.equals("") || !get_name.matches("[a-zA-Z ]+")) {
+            private boolean validateName(String get_name)
+            {
+                if (get_name.equals("") || !get_name.matches("[a-zA-Z ]+"))
+                {
                     etDonorname.requestFocus();
                     etDonorname.setError("Required Field! (Valid Name)");
                     return false;
                 }
-
-                else {
+                else
+                {
                     return true;
                 }
             }
@@ -218,17 +231,20 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
         protected DatePickerDialog.OnDateSetListener mDateSetListener;
 
         //Empty default constructor to prevent our app from crashing when the device is rotated.
-        public DatePickerDialogFragment() {
+        public DatePickerDialogFragment()
+        {
             // nothing to see here, move along
         }
 
-        public static DialogFragment newInstance(DatePickerDialog.OnDateSetListener callback){
+        public static DialogFragment newInstance(DatePickerDialog.OnDateSetListener callback)
+        {
             DatePickerDialogFragment dFragment = new DatePickerDialogFragment();
             dFragment.mDateSetListener = callback;
             return dFragment;
         }
 
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+        public Dialog onCreateDialog(Bundle savedInstanceState)
+        {
             final Calendar cal = Calendar.getInstance();
 
             return new DatePickerDialog(getActivity(),mDateSetListener, cal.get(Calendar.YEAR),
@@ -248,7 +264,6 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
         }
         else {
             DateFormat dateFormat = DateFormat.getDateInstance();
-            //Calendar day = dateFormat.getCalendar();
             tvRequireddate.setText(dateFormat.format(cal.getTime()));
             tvRequireddate.setError(null);
             storeDate = cal.getTime();
@@ -257,10 +272,9 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
 
     public String generatePIN()
     {
-        int x = (int)(Math.random() * 9);
-        x = x + 1;
-        String randomPIN = (x + "") + ( ((int)(Math.random()*1000)) + "" );
-        return randomPIN;
+        int x=9000;
+        int full=(int)((Math.random()*x)+1000);
+        return String.valueOf(full);
     }
 
     protected void verifySMSMessage(String send_user, Date stDate)
@@ -268,20 +282,55 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
         Log.i("Send SMS", "");
         String phoneNo = etDonorphone.getText().toString();
         String my_name = generatePIN();
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String username = currentUser.getString("username");
         String type_user ="Donor";
         try {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null,my_name , null, null);
-            Toast.makeText(getBaseContext(), "SMS sent.",Toast.LENGTH_LONG).show();
+            smsManager.sendTextMessage(phoneNo, null, my_name, null, null);
+            Toast.makeText(getBaseContext(), "    SMS sent.    ",Toast.LENGTH_LONG).show();
+            String[] separateUserDetails = send_user.split(",");
+            BloodRequest request = new BloodRequest();
+            request.setrequestorName(separateUserDetails[0]);
+            request.setLocation(separateUserDetails[1]);
+            request.setCity(separateUserDetails[2]);
+            request.setBloodGroup(separateUserDetails[3]);
+            request.setMessage(separateUserDetails[4]);
+            request.setRequiredBefore(stDate);
+            request.setCellNumber(separateUserDetails[5]);
+            request.setRequestStatus("Awaiting");
+            request.setVerificationCode(Integer.parseInt(my_name));
+            request.setUserName(username);
+
+            request.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    Log.d("database addition - ", "value added to database");
+                }
+            });
+
             Intent verify_intent = new Intent(this, RequestVerificationActivity.class);
             verify_intent.putExtra("Request_Code", my_name);
-            verify_intent.putExtra("Request_User",send_user);
-            verify_intent.putExtra("Type",type_user);
+            verify_intent.putExtra("Request_User", send_user);
+            verify_intent.putExtra("Type", type_user);
             verify_intent.putExtra("beforeDate", stDate.getTime());
             startActivity(verify_intent);
             finish();
-        } catch (Exception e) {
-            Toast.makeText(getBaseContext(),"SMS failed, please try again.",Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e)
+        {
+            new SweetAlertDialog(SendBloodRequestActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("SMS Failed..")
+                    .setContentText("Check for Cellular Connectivity.")
+                    .setConfirmText("   OK   ")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+                        }
+                    })
+                    .show();
             e.printStackTrace();
         }
     }
@@ -289,29 +338,68 @@ public class SendBloodRequestActivity extends ActionBarActivity implements DateP
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_send_blood_request, menu);
-        return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.fetchInBackground();
+        String typeOfUser =  currentUser.getString("userType");
+        Log.d("this type is", typeOfUser);
+        if (typeOfUser.contentEquals("Donor")){
+            getMenuInflater().inflate(R.menu.menu_home, menu);
+            return true;
+        }
+        else {
+            getMenuInflater().inflate(R.menu.sign_up, menu);
+            return true;
+        }
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent back_Intent = new Intent(SendBloodRequestActivity.this, HomeActivity.class);
-        startActivity(back_Intent);
-        finish();
-    }
+
+
+
+
+
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i1 = new Intent(SendBloodRequestActivity.this, SettingsActivity.class);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                Toast.makeText(getBaseContext(), "Opening Settings...", Toast.LENGTH_LONG).show();
+
+                break;
+
+            case R.id.log_out:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(SendBloodRequestActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(),"Logging Out...", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signUpButton:
+                Intent i2 = new Intent(SendBloodRequestActivity.this, DonorRegistrationActivity.class);
+                startActivity(i2);
+
+                Toast.makeText(getBaseContext(),"Opening Sign Up Form...", Toast.LENGTH_LONG).show();
+
+                break;
         }
+        return true;
+    }
 
-        return super.onOptionsItemSelected(item);
+
+    @Override
+    public void onBackPressed() {
+        //Intent back_Intent = new Intent(SendBloodRequestActivity.this, HomeActivity.class);
+        //startActivity(back_Intent);
+        finish();
     }
 
     public static Boolean isMobileAvailable(Context appcontext) {

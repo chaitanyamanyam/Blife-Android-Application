@@ -23,8 +23,7 @@ public class SettingsActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        Intent back_Intent = new Intent(SettingsActivity.this, HomeActivity.class);
-        startActivity(back_Intent);
+
         finish();
     }
 }

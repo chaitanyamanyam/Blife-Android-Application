@@ -1,8 +1,6 @@
 package com.nyu.blife_app;
 
-/**
- * Created by ramakrishnacmanyam on 4/15/15.
- */
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;

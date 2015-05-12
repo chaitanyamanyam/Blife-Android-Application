@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class RegistrationActivity extends ActionBarActivity {
@@ -80,19 +81,42 @@ public class RegistrationActivity extends ActionBarActivity {
                             intent.putExtra("User",conc_string);
                             startActivity(intent);
 
-                        } else {
+                        }
+                        else {
                             //SMS code
-                            if (!get_city.equals("CITY")) {
-                                if(isMobileAvailable(registration)) {
+                            if (!get_city.equals("CITY"))
+                            {
+                                if(isMobileAvailable(registration))
+                                {
                                     sendSMSMessage(conc_string);
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"No GSM Connectivity"
-                                            ,Toast.LENGTH_SHORT).show();
+                                    new SweetAlertDialog(RegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                            .setTitleText("SMS Failed..")
+                                            .setContentText("Check for Cellular Connectivity.")
+                                            .setConfirmText("   OK   ")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sDialog) {
+                                                    sDialog.cancel();
+                                                }
+                                            })
+                                            .show();
                                 }
-                            } else {
+                            }
+                            else {
+                                new SweetAlertDialog(RegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("City is empty!!")
+                                        .setContentText("Please enter valid city!!!")
+                                        .setConfirmText("   OK   ")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.cancel();
 
-                                Toast.makeText(getApplicationContext(), "Enter valid City.", Toast.LENGTH_LONG).show();
+                                            }
+                                        })
+                                        .show();
                             }
                         }
                     }
@@ -100,7 +124,18 @@ public class RegistrationActivity extends ActionBarActivity {
 
                 else
                 {
-                    Toast.makeText(getBaseContext(),"Enter valid data.",Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(RegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Registration Failed!!")
+                            .setContentText("Please check Details..")
+                            .setConfirmText("   OK   ")
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    sDialog.cancel();
+
+                                }
+                            })
+                            .show();
                 }
             }
 
@@ -128,14 +163,14 @@ public class RegistrationActivity extends ActionBarActivity {
                 else if (!get_firstname.matches("[a-zA-Z ]+")) {
                     EditTextfname.requestFocus();
                     EditTextfname.setError("Only alphabets");
-                    //EditTextfname.setText("");
                     return false;
                 }
 
-               else {
+                else {
                     return true;
                 }
             }
+
             private boolean validateLastname(String get_lastname) {
 
                 if (get_lastname.equals("")) {
@@ -146,15 +181,14 @@ public class RegistrationActivity extends ActionBarActivity {
                 else if (!get_lastname.matches("[a-zA-Z ]+")) {
                     EditTextlname.requestFocus();
                     EditTextlname.setError("Only alphabets");
-                    EditTextlname.setText("");
                     return false;
                 }
                 else {
                     return true;
                 }
             }
-            private boolean validateUsername(String get_username) {
 
+            private boolean validateUsername(String get_username) {
                 if (get_username.equals("")) {
                     EditTextusrname.requestFocus();
                     EditTextusrname.setError("Required Field!");
@@ -163,13 +197,13 @@ public class RegistrationActivity extends ActionBarActivity {
                 else if (!get_username.matches("^[a-z0-9_-]{3,15}$")) {
                     EditTextusrname.requestFocus();
                     EditTextusrname.setError("Enter valid username. /n Must have one number");
-                    EditTextusrname.setText("");
                     return false;
                 }
                 else {
                     return true;
                 }
             }
+
             private boolean validatepassword(String get_password) {
 
                 if (get_password.equals("")) {
@@ -180,7 +214,6 @@ public class RegistrationActivity extends ActionBarActivity {
                 else if (!get_password.matches("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})")) {
                     EditTextpassword.requestFocus();
                     EditTextpassword.setError("Minimum 6 characters atleast one digit and one uppercase");
-                    EditTextpassword.setText("");
                     return false;
                 }
                 else if(get_password.matches("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})")){
@@ -190,39 +223,25 @@ public class RegistrationActivity extends ActionBarActivity {
                 else{
                     return true;
                 }
-
-
             }
+
             private String validatePhone(String get_phone) {
-
-
-                if (get_phone.equals("")){
-                    EditTextphone.requestFocus();
-                    EditTextphone.setError("Required Field!");
-                }
-                else if (!get_phone.matches("[0-9]{10}")) {
+                if (get_phone.equals("") || (!get_phone.matches("[0-9]{10}"))){
                     EditTextphone.requestFocus();
                     EditTextphone.setError("Enter valid phone number");
-                    EditTextphone.setText("");
                 }
                 else
                 {
                     phoneno = get_phone;
                 }
-
                 return phoneno;
-
             }
+
             private void validateZip(String get_zip) {
 
-                if (get_zip.equals("")) {
-                    EditTextZip.requestFocus();
-                    EditTextZip.setError("Required Field!");
-                }
-                else if (!get_zip.matches("\\d{5}")) {
+                if (get_zip.equals("") || (!get_zip.matches("\\d{5}"))) {
                     EditTextZip.requestFocus();
                     EditTextZip.setError("Enter valid zipcode.");
-                    EditTextlname.setText("");
                 }
             }
         });
@@ -245,16 +264,27 @@ public class RegistrationActivity extends ActionBarActivity {
             startActivity(intent);
             finish();
         } catch (Exception e) {
-            Toast.makeText(getBaseContext(),"SMS failed, please try again.",Toast.LENGTH_LONG).show();
+            new SweetAlertDialog(RegistrationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("SMS Failed..")
+                    .setContentText("Check for Cellular Connectivity.")
+                    .setConfirmText("   OK   ")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+
+                        }
+                    })
+                    .show();
             e.printStackTrace();
         }
     }
     public String generatePIN()
     {
-        int x = (int)(Math.random() * 9);
-        x = x + 1;
-        String randomPIN = (x + "") + ( ((int)(Math.random()*1000)) + "" );
-        return randomPIN;
+        int x=9000;
+        int full=(int)((Math.random()*x)+1000);
+        return String.valueOf(full);
+
     }
 
 
@@ -281,8 +311,9 @@ public class RegistrationActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.signInButton) {
-            Intent i3 = new Intent(this, LoginActivity.class);
+            Intent i3 = new Intent(RegistrationActivity.this, LoginActivity.class);
             startActivity(i3);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

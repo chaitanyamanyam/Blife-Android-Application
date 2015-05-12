@@ -15,9 +15,7 @@ import android.widget.Toast;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-/**
- * Created by Pranav Gunner on 4/26/2015.
- */
+
 public class card_viewBR_adapter extends RecyclerView.Adapter<card_viewBR_adapter.ViewHolder> {
 
 
@@ -106,7 +104,7 @@ public class card_viewBR_adapter extends RecyclerView.Adapter<card_viewBR_adapte
             super(itemLayoutView);
 
 
-            card = (CardView) itemLayoutView.findViewById(R.id.card);
+           // card = (CardView) itemLayoutView.findViewById(R.id.card);
             vbr_reqdetails = (TextView) itemLayoutView.findViewById(R.id.reqname);
             vbr_textViewName = (TextView) itemLayoutView.findViewById(R.id.textViewNamevbr);
             vbr_textViewCity = (TextView) itemLayoutView.findViewById(R.id.textViewCityvbr);

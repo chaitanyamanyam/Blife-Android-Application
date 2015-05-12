@@ -11,7 +11,7 @@
         android:textSize="16sp"
         android:textColor="#fbf4f4"
 
-        android:gravity="center_horizontal"
+        android:gravity="left"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:paddingLeft="16dp"
